@@ -1,0 +1,118 @@
+﻿@model StationEditVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/Station">Stations</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Station</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Edit Station: <span class="text-primary">@Model.station.Name</span></h3>
+            </div>
+            <div class="col-auto">
+                <a href="/admin/Station" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-8">
+                <div class="card shadow-none border mb-3">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Station Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" class="row g-3">
+                            <!-- Hidden Field for ID -->
+                            <input type="hidden" asp-for="station.StationId" />
+
+                            <!-- Station Name -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Name">Station Name <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="station.Name" required>
+                                <span class="text-danger fs--1" asp-validation-for="station.Name"></span>
+                            </div>
+
+                            <!-- Station Code (Read Only) -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Code">System Code</label>
+                                <input class="form-control shadow-none bg-200" asp-for="station.Code" readonly>
+                                <div class="form-text fs--1 text-muted">System codes are permanent and cannot be modified.</div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Description">Description</label>
+                                <textarea class="form-control shadow-none" asp-for="station.Description" rows="4"></textarea>
+                                <span class="text-danger fs--1" asp-validation-for="station.Description"></span>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.IsActive">Operational Status</label>
+                                <select class="form-select shadow-none" asp-for="station.IsActive">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="/admin/Station/Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Changes</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Update Station
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Card: Record Meta Info -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-header bg-transparent">
+                        <h6 class="mb-0 d-flex align-items-center">
+                            <span class="fas fa-info-circle me-2"></span>Record Information
+                        </h6>
+                    </div>
+                    <div class="card-body fs--1">
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1">Created Date</label>
+                            <p class="text-900 mb-0">@Model.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1">Created By</label>
+                            <p class="text-900 mb-0 text-capitalize">@Model.createdUserName</p>
+                        </div>
+                        <hr class="text-300" />
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1">Last Update</label>
+                            <p class="text-900 mb-0">@Model.UpdatedAt.ToString("MMM dd, yyyy - hh:mm tt")</p>
+                        </div>
+                        <div class="mb-0">
+                            <label class="text-600 fw-bold mb-1">Updated By</label>
+                            <p class="text-900 mb-0 text-capitalize">@(Model.updatedUserName ?? "N/A")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_notificationPartial" />
+    <partial name="_ValidationScriptsPartial" />
+}

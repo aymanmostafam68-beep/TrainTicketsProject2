@@ -1,0 +1,185 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.GeneralSettingVMs
+@model GeneralSettingCreateVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Initialize System Settings</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">⚙️ System Configuration</h3>
+                <p class="text-600 mb-0">Set up your global station parameters and pricing logic.</p>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="generalSetting.Id" />
+
+            <div class="row g-3">
+                <!-- Left Column: Primary Settings (8/12) -->
+                <div class="col-lg-8">
+                    <!-- Identity Card -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Station Identity & Branding</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-900 fw-semi-bold" asp-for="generalSetting.Name">System Display Name <span class="text-danger">*</span></label>
+                                    <input asp-for="generalSetting.Name" class="form-control shadow-none" placeholder="e.g. Egypt Railways" required />
+                                    <span asp-validation-for="generalSetting.Name" class="text-danger fs--1"></span>
+                                </div>
+
+                             
+
+                                <div class="col-12 mt-3">
+                                    <label class="form-label text-900 fw-semi-bold">Upload Station Header/Logo</label>
+                                    <input type="file" id="logoFile" asp-for="LogoFile" class="form-control shadow-none" />
+                                    <div class="form-text fs--2">Recommended: 1200x500px for best display quality.</div>
+                                    <span class="text-danger fs--1" asp-validation-for="LogoFile"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financials Card -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Pricing & Timing</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label text-900 fw-semi-bold" asp-for="generalSetting.PricePerKilometer">Price / KM</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-200"><i class="fas fa-dollar-sign"></i></span>
+                                        <input asp-for="generalSetting.PricePerKilometer" class="form-control shadow-none" placeholder="0.00" />
+                                    </div>
+                                    <span asp-validation-for="generalSetting.PricePerKilometer" class="text-danger fs--1"></span>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-900 fw-semi-bold" asp-for="generalSetting.TimeSlot">Time Interval (Min)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-200"><i class="fas fa-clock"></i></span>
+                                        <input asp-for="generalSetting.TimeSlot" class="form-control shadow-none" placeholder="15" />
+                                    </div>
+                                    <span asp-validation-for="generalSetting.TimeSlot" class="text-danger fs--1"></span>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label text-900 fw-semi-bold">Initial Status</label>
+                                    <select asp-for="generalSetting.IsActive" class="form-select shadow-none">
+                                        <option value="true">🟢 Active</option>
+                                        <option value="false">🔴 Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card shadow-none border">
+                        <div class="card-body bg-light d-flex justify-content-between">
+                            <button type="reset" class="btn btn-link text-danger p-0 shadow-none">Reset All Fields</button>
+                            <div>
+                                <a asp-action="Index" asp-controller="Home" class="btn btn-falcon-default btn-sm me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Initialize Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Preview (4/12) -->
+                <div class="col-lg-4">
+                    <div class="card shadow-none border h-100">
+                        <div class="card-header bg-transparent border-bottom">
+                            <h6 class="mb-0 d-flex align-items-center">
+                                <span class="fas fa-image me-2 text-primary"></span>Visual Preview
+                            </h6>
+                        </div>
+                        <div class="card-body bg-light text-center">
+                            <div class="position-relative d-inline-block border rounded overflow-hidden shadow-sm bg-white w-100">
+                                <img id="logoFilePreview"
+                                     src="@(string.IsNullOrEmpty(Model.generalSetting.logoName)
+                                            ? Url.Content("~/img/StationLogo/default-logo.png")
+                                            : Url.Content("~/img/StationLogo/" + Model.generalSetting.logoName))"
+                                     class="img-fluid"
+                                     style="width: 100%; height: 200px; object-fit: cover;"
+                                     alt="Preview" />
+                                <div class="bg-dark bg-opacity-50 text-white position-absolute bottom-0 start-0 end-0 py-1 fs--2">
+                                    Header Image Preview
+                                </div>
+                            </div>
+
+                            <div class="mt-4 text-start">
+                                <div class="p-3 bg-white rounded border">
+                                    <h6 class="fs--1 fw-bold border-bottom pb-2 mb-2">Live Summary</h6>
+                                    <div class="mb-2">
+                                        <small class="text-500 text-uppercase fw-semi-bold fs--2">System Name:</small>
+                                        <div id="name-preview" class="fw-bold text-primary">---</div>
+                                    </div>
+                                    <div>
+                                        <small class="text-500 text-uppercase fw-semi-bold fs--2">Pricing Base:</small>
+                                        <div class="text-900"><span id="price-preview">0</span> / KM</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-soft-warning border-top">
+                            <div class="d-flex align-items-start">
+                                <span class="fas fa-exclamation-triangle text-warning me-2 mt-1"></span>
+                                <p class="fs--2 text-warning mb-0">Note: These settings are global. Incorrect pricing or time slots can affect ticket availability system-wide.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+
+    <script>
+        // Image Preview Logic
+        const logoInput = document.getElementById('logoFile');
+        const logoPreview = document.getElementById('logoFilePreview');
+        const nameInput = document.getElementById('generalSetting_Name');
+        const priceInput = document.getElementById('generalSetting_PricePerKilometer');
+
+        logoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { logoPreview.src = e.target.result; }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Text Preview Logic
+        nameInput.addEventListener('input', (e) => {
+            document.getElementById('name-preview').innerText = e.target.value || '---';
+        });
+
+        priceInput.addEventListener('input', (e) => {
+            document.getElementById('price-preview').innerText = e.target.value || '0';
+        });
+    </script>
+}

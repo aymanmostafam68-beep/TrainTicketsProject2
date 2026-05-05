@@ -1,0 +1,58 @@
+﻿@model TrainTicketsProject.Models.Train
+
+@{
+    ViewData["Title"] = "Train Details";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">🚆 Train Details</h3>
+        <a asp-action="Index" class="btn btn-secondary">← Back</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-6">
+                    <strong>Name:</strong> @Model.TrainName
+                </div>
+            </div>
+
+            <div class="row mb-3">
+               @*  <div class="col-md-6">
+                    <strong>Capacity:</strong> @Model.Capacity
+                </div> *@
+                <div class="col-md-6">
+                    <strong>Status:</strong>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Created At:</strong> @Model.CreatedAt
+                </div>
+                <div class="col-md-6">
+                    <strong>Route Name:</strong> @Model.Route.RouteName
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.TrainId" class="btn btn-warning">Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.TrainId" class="btn btn-danger">Delete</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,177 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.CarriageSeatVMs
+@model TrainInfoVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Header Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Trains List</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Seat Management</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">⚙️ Seat Management: <span class="text-primary">@Model.TrainName</span></h3>
+                <p class="text-600 mb-0">Manage and generate individual or bulk seats for carriages.</p>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Train Info Card -->
+            <div class="col-12">
+                <div class="card shadow-none border">
+                    <div class="card-body bg-light">
+                        <div class="row align-items-center">
+                            <div class="col-md-auto mb-3 mb-md-0">
+                                <div class="avatar avatar-3xl">
+                                    <div class="avatar-name rounded-circle bg-soft-primary text-primary fs-2">
+                                        <span><i class="fas fa-train"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="fs--1 text-600 fw-bold mb-0">Train Name</label>
+                                <h5 class="text-900 mb-0">@Model.TrainName</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fs--1 text-600 fw-bold mb-0">Train Code</label>
+                                <p class="text-900 mb-0 fw-semi-bold">#@Model.TrainCode</p>
+                            </div>
+                            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                <form id="genAllForm" asp-area="Admin" asp-controller="CarraiageSeat" asp-action="SeatsGenerator" method="post">
+                                    <input type="hidden" name="TrainId" value="@Model.TrainId" />
+                                    <button type="button" onclick="confirmGenerateAll()" class="btn btn-falcon-danger btn-sm px-4">
+                                        <span class="fas fa-magic me-1"></span> Generate All Missing
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carriages Table Card -->
+            <div class="col-12">
+                <div class="card shadow-none border">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="mb-0 text-900">Available Carriages for this Train</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive scrollbar">
+                            <table class="table table-sm table-hover align-middle mb-0">
+                                <thead class="bg-200 text-900">
+                                    <tr>
+                                        <th class="py-3 px-4">Carriage Name</th>
+                                        <th class="py-3">Class Type</th>
+                                        <th class="py-3">Total Capacity</th>
+                                        <th class="py-3">Current Status</th>
+                                        <th class="py-3 text-end px-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Carriages != null && Model.Carriages.Any())
+                                    {
+                                        foreach (var carriage in Model.Carriages)
+                                        {
+                                            <tr>
+                                                <td class="py-3 px-4 fw-semi-bold text-primary">@carriage.CarriageName</td>
+                                                <td class="py-3">
+                                                    <span class="badge badge-soft-info text-info fs--2">
+                                                        @carriage.TrainClass
+                                                    </span>
+                                                </td>
+                                                <td class="py-3">@carriage.Capacity Seats</td>
+                                                <td class="py-3">
+                                                    @if (carriage.CreatedSeats > 0)
+                                                    {
+                                                        <!-- Added text-success to darken the green text -->
+                                                        <span class="badge rounded-pill badge-soft-success text-success fs--2">
+                                                            <i class="fas fa-check-circle me-1"></i> @carriage.CreatedSeats Created
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <!-- Added text-warning to darken the orange/yellow text -->
+                                                        <span class="badge rounded-pill badge-soft-warning text-warning fs--2">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i> Missing
+                                                        </span>
+                                                    }
+                                                </td>
+                                                <td class="py-3 text-end px-4">
+                                                    @if (carriage.CreatedSeats == 0)
+                                                    {
+                                                        <form asp-action="GenerateSeats" asp-route-id="@carriage.CarriageId" method="post" class="d-inline">
+                                                            <button type="submit" class="btn btn-link p-0 text-primary fs--1 fw-semi-bold">
+                                                                <span class="fas fa-plus-circle me-1"></span>Generate Now
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <a asp-action="ViewSeats" asp-route-id="@carriage.CarriageId" class="btn btn-falcon-default btn-sm fs--2">
+                                                            <span class="fas fa-eye me-1"></span>View Details
+                                                        </a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center py-5">
+                                                <img src="~/assets/img/illustrations/empty.png" alt="No Carriages" style="width: 80px;" class="mb-3 d-block mx-auto" />
+                                                <p class="text-600">No carriages found for this train.</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+
+    <script>
+        function confirmGenerateAll() {
+            Swal.fire({
+                title: 'Bulk Seat Generation?',
+                text: "This will create all missing seats based on the carriage capacity for this train.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#e63757',
+                cancelButtonColor: '#748194',
+                confirmButtonText: 'Yes, Start Generating',
+                customClass: {
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-falcon-default'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // إظهار Loading بسيط عند التأكيد
+                    Swal.fire({
+                        title: 'Generating...',
+                        didOpen: () => { Swal.showLoading() },
+                        allowOutsideClick: false
+                    });
+                    document.getElementById('genAllForm').submit();
+                }
+            });
+        }
+    </script>
+}

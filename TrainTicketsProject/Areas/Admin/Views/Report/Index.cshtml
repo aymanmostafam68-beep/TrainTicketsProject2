@@ -1,0 +1,198 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.CarriageSeatVMs
+@model TrainReportVm
+
+@{
+    ViewData["Title"] = "Trains Report";
+}
+
+<div class="container-fluid py-4">
+    <!-- Page Header & Global Actions -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-file-alt me-2 text-primary"></span>
+                        <span>Comprehensive Trains Report</span>
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                        <span class="fas fa-sync-alt me-1"></span> Reset Report
+                    </a>
+                    <button class="btn btn-falcon-success btn-sm ms-2" onclick="window.print()">
+                        <span class="fas fa-print me-1"></span> Export PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Summary (Optional Visual Enhancement) -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-500">Total Capacity</h6>
+                            <h3 class="fw-bold mb-0 text-900">@Model.trains.Sum(x => x.Capacity)</h3>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-item bg-soft-primary text-primary"><span class="fas fa-users"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-500">Active Trains</h6>
+                            <h3 class="fw-bold mb-0 text-success">@Model.trains.Count(x => x.IsActive)</h3>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-item bg-soft-success text-success"><span class="fas fa-train"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-none border">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-500">Total Carriages</h6>
+                            <h3 class="fw-bold mb-0 text-info">@Model.trains.Sum(x => x.CarriageCount)</h3>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-item bg-soft-info text-info"><span class="fas fa-subway"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Section -->
+    <div class="card mb-3 shadow-none border">
+        <div class="card-body bg-light">
+            <form method="get" asp-action="Index">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-5">
+                        <div class="search-box w-100">
+                            <input class="form-control search-input" type="search" name="TrainCode"
+                                   placeholder="Search by Code or Name..."
+                                   value="@Context.Request.Query["TrainCode"]" />
+                            <span class="fas fa-search search-box-icon"></span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-falcon-primary">Filter Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Data Table -->
+    <div class="card shadow-none border">
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort px-3">Train Code</th>
+                            <th class="sort">Train Name</th>
+                            <th class="sort text-center">Carriages</th>
+                            <th class="sort">Route Covered</th>
+                            <th class="sort text-center">Total Capacity</th>
+                            <th class="sort text-center">Status</th>
+                            <th class="text-end px-3">Logistics</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.trains)
+                        {
+                            <tr>
+                                <td class="align-middle px-3 fw-semi-bold text-primary">#@item.TrainCode</td>
+                                <td class="align-middle text-900 fw-bold">@item.TrainName</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge rounded-pill bg-200 text-dark">@item.CarriageCount Units</span>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center">
+                                        <span class="fas fa-map-marker-alt text-400 me-2"></span>
+                                        <span class="text-700">@item.Route</span>
+                                    </div>
+                                </td>
+                                <td class="align-middle text-center fw-semi-bold text-700">@item.Capacity Seats</td>
+                                <td class="align-middle text-center">
+                                <td class="align-middle text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <!-- Added 'text-success' for a darker green font -->
+                                        <span class="badge badge-soft-success rounded-pill text-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Added 'text-danger' for a darker red font -->
+                                        <span class="badge badge-soft-danger rounded-pill text-danger">Inactive</span>
+                                    }
+                                </td>
+                                </td>
+                                <td class="align-middle text-end px-3">
+                                    <a href="/Admin/Report/TrainInfo/@item.id"
+                                       class="btn btn-falcon-default btn-sm shadow-none"
+                                       title="View Full Analytics">
+                                        <span class="fas fa-chart-line text-info me-1"></span>Analytics
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="card-footer bg-light py-2">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <p class="mb-0 fs--1 fw-semi-bold text-600">
+                        Showing page @Model.CurrentPage of @Model.TotalPages
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/Report/Index?page=@(Model.CurrentPage - 1)&TrainCode=@Context.Request.Query["TrainCode"]">
+                                <span class="fas fa-chevron-left"></span>
+                            </a>
+                        </li>
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="/Admin/Report/Index?page=@i&TrainCode=@Context.Request.Query["TrainCode"]">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/Report/Index?page=@(Model.CurrentPage + 1)&TrainCode=@Context.Request.Query["TrainCode"]">
+                                <span class="fas fa-chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+}

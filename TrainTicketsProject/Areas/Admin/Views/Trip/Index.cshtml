@@ -1,0 +1,160 @@
+﻿@model TripsInfoList
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-route me-2 text-primary"></span>
+                        <span>Trips Schedule & Logistics</span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light">
+            <form method="get" asp-action="Index">
+                <div class="row align-items-center justify-content-between g-2">
+                    <div class="col-sm-auto d-flex align-items-center">
+                        <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2 text-danger" title="Clear Filters">
+                            <span class="fas fa-sync-alt"></span>
+                        </a>
+                        <select class="form-select form-select-sm" id="customLength" style="width: auto;">
+                            <option value="10">10 entries</option>
+                            <option value="25">25 entries</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="search-box" style="min-width: 250px;">
+                                <input class="form-control form-control-sm search-input"
+                                       type="search" name="station"
+                                       placeholder="Search by station..."
+                                       value="@Context.Request.Query["station"]" />
+                                <span class="fas fa-search search-box-icon"></span>
+                            </div>
+                            <button type="submit" class="btn btn-falcon-primary btn-sm">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort">Date</th>
+                            <th class="sort">Train</th>
+                            <th class="sort">Origin & Destination</th>
+                            <th class="sort">Time & Duration</th>
+                            <th class="sort">Intermediate Stations</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @if (Model.tripInfos != null && Model.tripInfos.Any())
+                        {
+                            @foreach (var trip in Model.tripInfos)
+                            {
+                                <tr>
+                                    <td class="align-middle white-space-nowrap fw-semi-bold">
+                                        @trip.TravelDate.ToString("dd MMM, yyyy")
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge badge-soft-info">@trip.TrainCode</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="d-flex align-items-center">
+                                            <span class="fw-bold text-900">@trip.DepartureStation</span>
+                                            <span class="fas fa-long-arrow-alt-right mx-2 text-400"></span>
+                                            <span class="fw-bold text-900">@trip.ArrivalStation</span>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="fw-semi-bold text-primary">
+                                            @trip.DepartureTime.ToString("HH:mm") - @trip.ArrivalTime.ToString("HH:mm")
+                                        </div>
+                                        <div class="small text-muted text-nowrap">
+                                            <span class="fas fa-clock me-1"></span>@trip.Duration.ToString(@"hh\:mm") hrs
+                                        </div>
+                                    </td>
+                                    <td class="align-middle" style="min-width: 200px;">
+                                        <select class="form-select form-select-sm fs--2">
+                                            <option selected disabled>View Route (@trip.AllRouteStations.Count Stations)</option>
+                                            @foreach (var st in trip.AllRouteStations)
+                                            {
+                                                <option disabled>
+                                                    @st.DistanceFromStart km - @st.Station.Name
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <p class="mb-0 text-400 fw-bold">No trips found matching your criteria.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Footer -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer bg-light py-2">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <p class="mb-0 fs--1 fw-semi-bold text-600">
+                            Showing page @Model.CurrentPage of @Model.TotalPages
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index"
+                                   asp-route-page="@(Model.CurrentPage - 1)"
+                                   asp-route-station="@Context.Request.Query["station"]">
+                                    <span class="fas fa-chevron-left"></span>
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" asp-action="Index"
+                                       asp-route-page="@i"
+                                       asp-route-station="@Context.Request.Query["station"]">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index"
+                                   asp-route-page="@(Model.CurrentPage + 1)"
+                                   asp-route-station="@Context.Request.Query["station"]">
+                                    <span class="fas fa-chevron-right"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+}

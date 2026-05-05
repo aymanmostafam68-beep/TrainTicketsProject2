@@ -1,0 +1,17 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    const mainFileInput = document.getElementById('Mainfile');
+    const mainFilePreview = document.getElementById('MainfilePreview');
+
+    mainFileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                mainFilePreview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

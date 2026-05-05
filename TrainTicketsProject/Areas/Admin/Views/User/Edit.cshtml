@@ -1,0 +1,138 @@
+﻿@model UserVM
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit User</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Edit User: <span class="text-primary">@Model.userName</span></h3>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Left Side: Form Section (8/12) -->
+            <div class="col-lg-8">
+                <div class="card shadow-none border mb-3">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Account Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-area="Admin" asp-controller="User" asp-action="Edit" class="row g-3">
+                            <input type="hidden" asp-for="id" /> <!-- -->
+                            <div asp-validation-summary="ModelOnly" class="text-danger fs--1"></div>
+
+                            <!-- Username -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="userName">User Name <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="userName" required>
+                                <span class="text-danger fs--1" asp-validation-for="userName"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Email">Email Address <span class="text-danger">*</span></label>
+                                <input asp-for="Email" class="form-control shadow-none" type="email" required />
+                                <span class="text-danger fs--1" asp-validation-for="Email"></span>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="RoleName">Assigned Role</label>
+                                <select asp-for="RoleName" asp-items="Model.Roles" class="form-select shadow-none js-choice">
+                                    <option value="">-- Select Role --</option>
+                                </select>
+                                <span class="text-danger fs--1" asp-validation-for="RoleName"></span>
+                            </div>
+
+                            <hr class="my-4 text-300" />
+
+                            <!-- Security & Status Section -->
+                            <div class="col-md-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" asp-for="IsConfirmed" type="checkbox" id="flexSwitchConfirmed" />
+                                    <label class="form-check-label fw-bold" for="flexSwitchConfirmed">Email Confirmed</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" asp-for="IsLocked" type="checkbox" id="flexSwitchLocked" />
+                                    <label class="form-check-label fw-bold text-danger" for="flexSwitchLocked">Account Locked</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fs--1 fw-semi-bold" asp-for="LockoutEnd">Lockout Expiration</label>
+                                <input asp-for="LockoutEnd" class="form-control shadow-none" type="datetime-local" />
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Changes</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Update Profile
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Meta Info Card (4/12) -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-header bg-transparent border-bottom">
+                        <h6 class="mb-0 d-flex align-items-center">
+                            <span class="fas fa-shield-alt me-2 text-primary"></span>Account Security Info
+                        </h6>
+                    </div>
+                    <div class="card-body fs--1">
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1 text-uppercase">Account ID</label>
+                            <p class="text-900 mb-0 font-monospace">@Model.id</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1 text-uppercase">Current Role</label>
+                            <p class="text-900 mb-0">
+                                <span class="badge badge-subtle-primary">@Model.RoleName</span>
+                            </p>
+                        </div>
+                        <hr class="text-300" />
+                        <div class="alert alert-warning p-2 border-0 fs--2 mb-0">
+                            <p class="mb-0">
+                                <span class="fas fa-exclamation-triangle me-1"></span>
+                                Modifying user roles or lock status will take effect immediately upon saving.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,132 @@
+﻿@model TrainInfoVM
+
+@{
+    ViewData["Title"] = "Train Details";
+    // لا نحتاج لكتابة Layout هنا إذا كان معرفاً في _ViewStart
+}
+
+<div class="container-fluid">
+    <!-- Header Section (Falcon Style) -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-md">
+                    <h3 class="mb-2 mb-md-0 text-primary">
+                        <span class="fas fa-train me-2"></span>@Model.TrainName
+                        <small class="text-700 fs--1">(@Model.TrainCode)</small>
+                    </h3>
+                    <p class="mb-0 text-500">Detailed carriage breakdown and seat availability.</p>
+                </div>
+                <div class="col-auto">
+                    <a href="/Admin/Report/Index" class="btn btn-falcon-default btn-sm">
+                        <span class="fas fa-arrow-left me-1"></span> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carriage Details Table (Falcon Table Style) -->
+    <div class="card shadow-none border-bottom">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">Carriage List</h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort align-middle">Carriage Name</th>
+                            <th class="sort align-middle">Class</th>
+                            <th class="sort align-middle text-center">Total Capacity</th>
+                            <th class="sort align-middle text-center">Available Seats</th>
+                            <th class="sort align-middle text-center">Status</th>
+                            <th class="sort align-middle text-end">Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @if (Model.Carriages != null && Model.Carriages.Any())
+                        {
+                            foreach (var carriage in Model.Carriages)
+                            {
+                                <tr>
+                                    <td class="align-middle fw-semi-bold">@carriage.CarriageName</td>
+                                    <td class="align-middle">
+                                        <!-- Added "text-dark" for black or "text-primary" for blue -->
+                                        <span class="badge badge-soft-info text-dark">@carriage.TrainClass</span>
+                                    </td>
+                                    <td class="align-middle text-center">@carriage.Capacity</td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge rounded-pill text-dark @(carriage.AvailableSeats > 0 ? "badge-soft-success" : "badge-soft-danger")">
+                                            @carriage.AvailableSeats
+                                        </span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        @if (carriage.AvailableSeats > 0)
+                                        {
+                                            <span class="badge badge-dot text-success"><span class="fas fa-check-circle me-1"></span>Available</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-dot text-danger"><span class="fas fa-times-circle me-1"></span>Full</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-end text-nowrap">@carriage.CreatedAt.ToString("d")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-500">No carriages found for this train.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Footer (Using Falcon Stats Style) -->
+    <div class="row g-3 mt-1">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar avatar-l bg-soft-primary text-primary me-3">
+                            <div class="avatar-name rounded-circle"><span class="fas fa-columns"></span></div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-700">Total Carriages</h6>
+                            <h3 class="fw-bolder mb-0">@Model.Carriages.Count</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar avatar-l bg-soft-success text-success me-3">
+                            <div class="avatar-name rounded-circle"><span class="fas fa-chair"></span></div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-700">Total Available Seats</h6>
+                            <h3 class="fw-bolder mb-0 text-success">@Model.Carriages.Sum(c => c.AvailableSeats)</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* هنا نضع فقط السكريبتات الخاصة بهذه الصفحة إذا لزم الأمر *@
+    <partial name="_ToastreScriptPartial" />
+}

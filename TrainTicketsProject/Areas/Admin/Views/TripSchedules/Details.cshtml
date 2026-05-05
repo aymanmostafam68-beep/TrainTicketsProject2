@@ -1,0 +1,35 @@
+﻿<div class="card shadow p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Route:</strong>
+            <p>@Model.Route.Name</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Train:</strong>
+            <p>@Model.Train.TrainName</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Time Slot:</strong>
+            <p>@Model.TripSchedule.TimeSlot</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Departure:</strong>
+            <p>@Model.TripSchedule.DepartureTime.ToString("g")</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Arrival:</strong>
+            <p>@Model.TripSchedule.ArrivalTime.ToString("g")</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Status:</strong>
+            <p class="@(Model.TripSchedule.IsActive ? "text-success" : "text-danger")">
+                @(Model.TripSchedule.IsActive ? "Active" : "Inactive")
+            </p>
+        </div>
+    </div>
+</div>

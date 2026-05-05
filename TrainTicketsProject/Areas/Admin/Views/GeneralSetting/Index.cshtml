@@ -1,0 +1,145 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.GeneralSettingVMs
+@model GeneralSettingVM
+
+@{
+    ViewData["Title"] = "General Settings";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-6 col-sm-auto">
+                    <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">
+                        <span class="fas fa-cog me-2 text-primary"></span>General Settings
+                    </h5>
+                </div>
+                <div class="col-6 col-sm-auto ml-auto">
+                    <a href="/Admin/GeneralSetting/Create" class="btn btn-falcon-success btn-sm">
+                        <span class="fas fa-plus me-1"></span> Create New
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card shadow-none border-bottom mb-3">
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort align-middle">ID</th>
+                            <th class="sort align-middle">Setting Name</th>
+                            <th class="sort align-middle text-center">Price/KM</th>
+                            <th class="sort align-middle text-center">Interval (Min)</th>
+                            <th class="sort align-middle">Created At</th>
+                            <th class="sort align-middle text-center">Status</th>
+                            <th class="sort align-middle text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.generalSetting)
+                        {
+                            <tr>
+                                <td class="align-middle">#@item.Id</td>
+                                <td class="align-middle fw-semi-bold">@item.Name</td>
+                            
+                                <td class="align-middle text-center">EGP @item.PricePerKilometer</td>
+                                <td class="align-middle text-center">@item.TimeSlot</td>
+                                <td class="align-middle text-nowrap">@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td class="align-middle text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <!-- Added 'text-success' for a darker green font -->
+                                        <span class="badge badge-soft-success rounded-pill text-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Added 'text-danger' for a darker red font -->
+                                        <span class="badge badge-soft-danger rounded-pill text-danger">Inactive</span>
+                                    }
+                                </td>
+                                <td class="align-middle text-end text-nowrap">
+                                    <a href="/Admin/GeneralSetting/Edit/@item.Id"
+                                       class="btn btn-falcon-default btn-sm shadow-none me-1"
+                                       title="Edit">
+                                        <span class="fas fa-pencil-alt text-warning"></span>
+                                    </a>
+                                @*     <button data-url="@Url.Action("Delete", "GeneralSetting", new { area = "Admin" })"
+                                            data-id="@item.Id"
+                                            class="btn btn-falcon-default btn-sm shadow-none btn-delete"
+                                            title="Delete">
+                                        <span class="fas fa-trash-alt text-danger"></span>
+                                    </button> *@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="card-footer d-flex align-items-center justify-content-end bg-light">
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="/Admin/GeneralSetting/Index?page=@(Model.CurrentPage - 1)">
+                            <span class="fas fa-chevron-left"></span>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/Admin/GeneralSetting/Index?page=@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="/Admin/GeneralSetting/Index?page=@(Model.CurrentPage + 1)">
+                            <span class="fas fa-chevron-right"></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const url = this.dataset.url;
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    customClass: {
+                        confirmButton: 'btn btn-danger',
+                        cancelButton: 'btn btn-secondary'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = `${url}/${id}`;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

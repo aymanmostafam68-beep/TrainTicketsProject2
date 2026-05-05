@@ -1,0 +1,50 @@
+﻿@model TrainTicketsProject.Models.Train
+
+@{
+    ViewData["Title"] = "Delete Train";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-danger">🗑️ Delete Train</h3>
+        <a asp-action="Index" class="btn btn-secondary">← Back</a>
+    </div>
+
+    <div class="card shadow border-danger">
+        <div class="card-body text-center">
+
+            <h5 class="mb-4">Are you sure you want to delete this train?</h5>
+
+            <div class="mb-3">
+                <strong>@Model.TrainName</strong>
+            </div>
+
+       @*      <div class="mb-3">
+                Capacity: @Model.Capacity
+            </div> *@
+
+            <div class="mb-4">
+                Status:
+                @if (Model.IsActive)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Inactive</span>
+                }
+            </div>
+
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="TrainId" />
+
+                <button type="submit" class="btn btn-danger">✔ Confirm Delete</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+
+</div>

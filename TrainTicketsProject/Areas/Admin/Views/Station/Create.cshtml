@@ -1,0 +1,120 @@
+﻿@model StationCreateVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/Admin/Station/Index">Stations</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Create New Station</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Add New Station</h3>
+            </div>
+            <div class="col-auto">
+                <a href="/Admin/Station/Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-8">
+                <div class="card shadow-none border">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">General Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" class="row g-3">
+                            <!-- Station Name -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Name">Station Name <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="station.Name" placeholder="Enter station formal name" required>
+                                <span class="text-danger fs--1" asp-validation-for="station.Name"></span>
+                            </div>
+
+                            <!-- Station Code -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Code">System Code <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none fw-bold" asp-for="station.Code" placeholder="e.g. UPPEREGYPT_1" required>
+                                <div class="form-text fs--1 text-muted">Use uppercase letters and underscores. This code is permanent and cannot be changed later.</div>
+                                <span class="text-danger fs--1" asp-validation-for="station.Code"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="station.Description">Description</label>
+                                <textarea class="form-control shadow-none" asp-for="station.Description" rows="4" placeholder="Briefly describe the station..."></textarea>
+                                <span class="text-danger fs--1" asp-validation-for="station.Description"></span>
+                            </div>
+
+                            <!-- Status & Settings -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" for="status">Operational Status</label>
+                                <select class="form-select shadow-none" name="status">
+                                    <option selected value="true">Active</option>
+                                    <option value="false">Inactive / Under Maintenance</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <!-- Secondary Actions (Left Side) -->
+                                <div>
+                                    <a href="/Admin/Station/Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Form</button>
+                                </div>
+
+                                <!-- Primary Action (Right Side) -->
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Create Station
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Card for Tips or Info -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fas fa-info-circle text-primary fs-2 me-2"></span>
+                            <h6 class="mb-0">Station Requirements</h6>
+                        </div>
+                        <p class="fs--1 text-600">Please ensure that the station code matches the internal system naming convention to avoid synchronization errors.</p>
+                        <hr>
+                        <div class="bg-white p-3 rounded-3 border">
+                            <h6 class="fs--1 fw-bold">Live Preview (Example)</h6>
+                            <div class="text-uppercase fw-semi-bold fs--2 text-500">Code:</div>
+                            <div class="fs-4 fw-bold text-primary mb-2" id="code-preview">UPPEREGYPT_1</div>
+                            <div class="text-uppercase fw-semi-bold fs--2 text-500">Label:</div>
+                            <div class="fs--1" id="name-preview">Main Station Name</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_notificationPartial" />
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Simple live preview for the side card
+        document.getElementById('station_Code').addEventListener('input', function(e) {
+            document.getElementById('code-preview').innerText = e.target.value || 'UPPEREGYPT_1';
+        });
+
+        document.getElementById('station_Name').addEventListener('input', function(e) {
+            document.getElementById('name-preview').innerText = e.target.value || 'Main Station Name';
+        });
+    </script>
+}

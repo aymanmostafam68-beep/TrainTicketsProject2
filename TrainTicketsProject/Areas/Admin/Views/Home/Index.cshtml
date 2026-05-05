@@ -1,0 +1,154 @@
+﻿@using TrainTicketsProject.ViewModels
+@model DashboardVM
+@using System.Security.Claims
+
+
+@{
+    var fullName = User.FindFirst("FullName")?.Value;
+    var jobName = User.FindFirst("JobName")?.Value;
+    var code = User.FindFirst("Code")?.Value;
+    var email = User.FindFirst("Email")?.Value;
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value.Replace(".", " ") ?? User.FindFirst(ClaimTypes.Name)?.Value;
+}
+
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Welcome Back , @userName</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Station Statistics</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white mb-4 shadow">
+                <div class="card-body">
+                    <h5>Trips</h5>
+                    <h3>@Model.TotalTrips</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white mb-4 shadow">
+                <div class="card-body">
+                    <h5>Bookings</h5>
+                    <h3>@Model.TotalBookings</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white mb-4 shadow">
+                <div class="card-body">
+                    <h5>Trains</h5>
+                    <h3>@Model.TotalTrains</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white mb-4 shadow">
+                <div class="card-body">
+                    <h5>Occupancy</h5>
+                    <h3>@Model.OccupancyRate %</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-3 shadow">
+                <h5>Transactions</h5>
+                <h3>@Model.TotalTransactions</h3>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        @* donutes *@
+
+        <div class="row">
+            <div class="col-md-4">
+                <div style="height:300px;">
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div style="height:300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div style="height:300px;">
+                    <canvas id="tripsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+
+    
+    
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const bookingsLabels = @Html.Raw(Json.Serialize(ViewBag.BookingsLabels));
+        const bookingsData = @Html.Raw(Json.Serialize(ViewBag.BookingsData));
+
+        new Chart(document.getElementById('bookingsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: bookingsLabels,
+                datasets: [{
+                    data: bookingsData
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        const revenueLabels = @Html.Raw(Json.Serialize(ViewBag.RevenueLabels));
+        const revenueData = @Html.Raw(Json.Serialize(ViewBag.RevenueData));
+
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'pie',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    data: revenueData
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        const tripsLabels = @Html.Raw(Json.Serialize(ViewBag.TripsLabels));
+        const tripsData = @Html.Raw(Json.Serialize(ViewBag.TripsData));
+
+        new Chart(document.getElementById('tripsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: tripsLabels,
+                datasets: [{
+                    data: tripsData
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+}

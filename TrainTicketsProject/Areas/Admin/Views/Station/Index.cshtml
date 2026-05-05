@@ -1,0 +1,219 @@
+﻿@using TrainTicketsProject.ViewModels;
+
+@model IEnumerable<StationVM>
+
+
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-charging-station me-2 text-primary"></span>
+                        <span>Stations Management</span>
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-falcon-primary btn-sm" href="/admin/Station/create">
+                        <span class="fas fa-plus me-1"></span> New Station
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-sm-auto d-flex align-items-center">
+                    <!-- Bulk Actions -->
+                    <div id="bulk-actions" class="d-none me-3">
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" id="bulkActionSelect">
+                                <option value="">Bulk Actions</option>
+                                <option value="activate">Activate</option>
+                                <option value="deactivate">Archive</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" id="applyBulkAction">Apply</button>
+                        </div>
+                    </div>
+                    <!-- Entry Count Dropdown -->
+                    <select class="form-select form-select-sm" id="customLength">
+                        <option value="10">10 entries</option>
+                        <option value="25">25 entries</option>
+                        <option value="50">50 entries</option>
+                    </select>
+                </div>
+                <div class="col-sm-auto mt-2 mt-sm-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Custom Export Group -->
+                        <div class="btn-group shadow-none">
+                            <button class="btn btn-falcon-default btn-sm" id="exportExcel" title="Excel"><span class="fas fa-file-excel text-success"></span></button>
+                            <button class="btn btn-falcon-default btn-sm" id="exportPdf" title="PDF"><span class="fas fa-file-pdf text-danger"></span></button>
+                            <button class="btn btn-falcon-default btn-sm" id="printTable" title="Print"><span class="fas fa-print text-primary"></span></button>
+                        </div>
+                        <!-- Search Box -->
+                        <div class="search-box" style="min-width: 200px;">
+                            <input class="form-control form-control-sm search-input" id="customSearch" type="search" placeholder="Search stations..." />
+                            <span class="fas fa-search search-box-icon"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table id="stationTable" class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="white-space-nowrap py-2 align-middle" style="width: 20px;">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input select-all" type="checkbox" />
+                                </div>
+                            </th>
+                            <th class="sort">ID</th>
+                            <th class="sort">Station Name</th>
+                            <th class="sort">Code</th>
+                            <th class="sort">Created At</th>
+                            <th class="sort text-center">Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="align-middle white-space-nowrap">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input row-select" type="checkbox" data-id="@item.station.StationId" />
+                                    </div>
+                                </td>
+                                <td class="align-middle">#@item.station.StationId</td>
+                                <td class="align-middle fw-semi-bold">@item.station.Name</td>
+                                <td class="align-middle">@item.station.Code</td>
+                                <td class="align-middle">@item.station.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td class="align-middle text-center">
+                                    @if (item.station.IsActive)
+                                    {
+                                        <!-- Added 'text-success' for a darker green font -->
+                                        <span class="badge badge-soft-success rounded-pill text-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Added 'text-danger' for a darker red font -->
+                                        <span class="badge badge-soft-danger rounded-pill text-danger">Inactive</span>
+                                    }
+                                </td>
+                                <td class="align-middle text-end">
+                                    <div class="dropdown font-sans-serif position-static">
+                                        <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal" type="button" data-bs-toggle="dropdown"><span class="fas fa-ellipsis-h fs--1"></span></button>
+                                        <div class="dropdown-menu dropdown-menu-end border py-0">
+                                            <div class="bg-white py-2">
+                                                <a class="dropdown-item" href="/admin/Station/Edit/@item.station.StationId">Edit</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="DeleteStation(@item.station.StationId)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-light">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <p class="mb-0 fs--1" id="tableInfo"></p>
+                </div>
+                <div class="col-auto d-flex" id="tablePagination">
+                    <!-- Pagination will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            const table = $('#stationTable').DataTable({
+                dom: 't', // 't' means only the Table, hiding default search/length/info/pagination
+                pageLength: 10,
+                order: [[1, 'desc']],
+                columnDefs: [{ orderable: false, targets: [0, 6] }],
+                buttons: [
+                    { extend: 'excel', className: 'd-none' },
+                    { extend: 'pdf', className: 'd-none' },
+                    { extend: 'print', className: 'd-none' }
+                ],
+                drawCallback: function (settings) {
+                    // Update Info (e.g. Showing 1 to 10 of 50)
+                    const info = table.page.info();
+                    $('#tableInfo').html(`Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} entries`);
+                    
+                    // Custom Pagination Styling
+                    $('#tablePagination').html($('.dataTables_paginate').html());
+                    $('.dataTables_paginate').remove(); // Clean up
+                    $('#tablePagination .pagination').addClass('pagination-sm mb-0');
+                }
+            });
+
+            // Link Custom UI to DataTable
+            $('#customSearch').on('keyup', function () { table.search(this.value).draw(); });
+            $('#customLength').on('change', function () { table.page.len(this.value).draw(); });
+            
+            // Export Triggers
+            $('#exportExcel').on('click', () => table.button('.buttons-excel').trigger());
+            $('#exportPdf').on('click', () => table.button('.buttons-pdf').trigger());
+            $('#printTable').on('click', () => table.button('.buttons-print').trigger());
+
+            // Bulk Selection Logic
+            $('.select-all').on('change', function() {
+                $('.row-select').prop('checked', this.checked);
+                toggleBulkMenu();
+            });
+
+            $(document).on('change', '.row-select', toggleBulkMenu);
+
+            function toggleBulkMenu() {
+                const count = $('.row-select:checked').length;
+                count > 0 ? $('#bulk-actions').removeClass('d-none') : $('#bulk-actions').addClass('d-none');
+            }
+        });
+
+             function DeleteStation(stationId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the AJAX POST
+                    $.ajax({
+                        url: '/admin/Station/Delete/' + stationId,
+                        type: 'POST', // Critical: Use POST
+                        headers: {
+                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            // Refresh table or remove row
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

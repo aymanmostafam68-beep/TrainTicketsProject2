@@ -1,0 +1,241 @@
+﻿@model IdentityCreateVM
+
+<!DOCTYPE html>
+<html data-bs-theme="dark" lang="en-US" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>Falcon | Dashboard &amp; Web App Template</title>
+
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="../../Identity/assets/img/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../Identity/assets/img/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../Identity/assets/img/favicons/favicon-16x16.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../../Identity/assets/img/favicons/favicon.ico">
+    <link rel="manifest" href="../../Identity/assets/img/favicons/manifest.json">
+    <meta name="msapplication-TileImage" content="../../Identity/assets/img/favicons/mstile-150x150.png">
+    <meta name="theme-color" content="#ffffff">
+    <script src="../../Identity/assets/js/config.js"></script>
+    <script src="~/vendors/simplebar/simplebar.min.js"></script>
+
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================--> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+    <link href="~/vendors/simplebar/simplebar.min.css" rel="stylesheet">
+    <link href="~/assets/css/theme-rtl.css" rel="stylesheet" id="style-rtl">
+    <link href="~/assets/css/theme.css" rel="stylesheet" id="style-default">
+    <link href="~/assets/css/user-rtl.css" rel="stylesheet" id="user-style-rtl">
+    <link href="~/assets/css/user.css" rel="stylesheet" id="user-style-default">
+    <script>
+        var isRTL = JSON.parse(localStorage.getItem('isRTL'));
+        if (isRTL) {
+          var linkDefault = document.getElementById('style-default');
+          var userLinkDefault = document.getElementById('user-style-default');
+          linkDefault.setAttribute('disabled', true);
+          userLinkDefault.setAttribute('disabled', true);
+          document.querySelector('html').setAttribute('dir', 'rtl');
+        } else {
+          var linkRTL = document.getElementById('style-rtl');
+          var userLinkRTL = document.getElementById('user-style-rtl');
+          linkRTL.setAttribute('disabled', true);
+          userLinkRTL.setAttribute('disabled', true);
+        }
+    </script>
+</head>
+
+
+<body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+    <main class="main" id="top">
+        <div class="container-fluid">
+            <!-- flex-center keeps the card in the middle of the viewport -->
+            <div class="row min-vh-100 flex-center g-0">
+                <!-- ADJUSTED WIDTH HERE: col-lg-9 (75% width) looks best for dual-column cards -->
+                <div class="col-lg-9 col-xxl-7 py-3 position-relative">
+                    <img class="bg-auth-circle-shape" src="../../Identity/assets/img/icons/spot-illustrations/bg-shape.png" alt="" width="250"><img class="bg-auth-circle-shape-2" src="../../Identity/assets/img/icons/spot-illustrations/shape-1.png" alt="" width="150">
+                    <div class="card overflow-hidden z-1">
+                        <div class="card-body p-0">
+                            <div class="row g-0 h-100">
+                                <div class="col-md-5 text-center bg-card-gradient">
+                                    <div class="position-relative p-4 pt-md-5 pb-md-7" data-bs-theme="light">
+                                        <div class="bg-holder bg-auth-card-shape" style="background-image:url(../../Identity/assets/img/icons/spot-illustrations/half-circle.png);">
+                                        </div>
+                                        <!--/.bg-holder-->
+
+                                        <div class="z-1 position-relative">
+                                            <a class="link-light mb-4 font-sans-serif fs-5 d-inline-block fw-bolder" href="/Identity/Account/index">
+                                                Train Tickets System
+                                            </a>
+                                            <p class="opacity-75 text-white">We will send you a confirmation email. Please check your email and confirm your account to be able to log in</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 mb-4 mt-md-4 mb-md-5" data-bs-theme="light">
+                                        <p class="pt-3 text-white">Have an account?<br><a class="btn btn-outline-light mt-2 px-4" href="/Identity/Account/Login">Log In</a></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 d-flex flex-center">
+                                    <div class="p-4 p-md-5 flex-grow-1">
+                                        <h3>Register</h3>
+                                        <form method="post">
+                                            <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="FirstName" class="form-label" for="card-first-name">First Name</label>
+                                                    <input asp-for="FirstName" class="form-control" type="text" autocomplete="on" id="card-first-name" />
+													    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="LastName" class="form-label" for="card-last-name">Last Name</label>
+                                                    <input asp-for="LastName" class="form-control" type="text" autocomplete="on" id="card-last-name" />
+													<span asp-validation-for="LastName" class="text-danger small"></span>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="PhoneNumber" class="form-label" for="card-first-name">Phone</label>
+                                                    <input asp-for="PhoneNumber" pattern="[0-9]*"
+                                                           inputmode="numeric" maxlength="11" class="form-control" type="text" autocomplete="on" id="card-first-name" />
+                                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label asp-for="NationalId" class="form-label" for="card-last-name">National ID</label>
+                                                    <input asp-for="NationalId" pattern="[0-9]*" maxlength="14" class="form-control" type="text" autocomplete="on" id="card-last-name" />
+                                                    <span asp-validation-for="NationalId" class="text-danger small"></span>  
+                                                </div>
+
+                                            </div>
+                                         
+
+                                            <div class="mb-3">
+                                                <label asp-for="Email" class="form-label" for="card-email">Email</label>
+                                                <input asp-for="Email" class="form-control" type="email" autocomplete="on" id="card-email" />
+												<span asp-validation-for="Email" class="text-danger small"></span>
+                                            </div>
+                                            <div class="row gx-2">
+                                                <div class="mb-3 col-sm-6">
+                                                    <label asp-for="Password" class="form-label" for="card-password">Password</label>
+                                                    <input asp-for="Password" class="form-control" type="password" autocomplete="on" id="card-password" />
+                                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                                </div>
+                                                <div class="mb-3 col-sm-6">
+                                                    <label asp-for="ConfirmPassword" class="form-label" for="card-confirm-password">Confirm Password</label>
+                                                    <input asp-for="ConfirmPassword" class="form-control" type="password" autocomplete="on" id="card-confirm-password" />
+                                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>    
+                                                </div>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" checked type="checkbox" id="card-register-checkbox" />
+                                                <label class="form-label" for="card-register-checkbox">I accept the <a href="#!">terms </a>and <a class="white-space-nowrap" href="#!">privacy policy</a></label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <button class="btn btn-primary d-block w-100 mt-3" type="submit" name="submit">Register</button>
+                                            </div>
+                                        </form>
+                                        <div class="position-relative mt-4">
+                                            <hr />
+                                            <div class="divider-content-center">or register with</div>
+                                        </div>
+                                   @*      <div class="row g-2 mt-2">
+                                            <div class="col-sm-6"><a class="btn btn-outline-google-plus btn-sm d-block w-100" href="#"><span class="fab fa-google-plus-g me-2" data-fa-transform="grow-8"></span> google</a></div>
+ *@
+
+                                         @*    <div 
+                                                class="col-sm-6">
+                                                    
+                                                    class="btn btn-outline-facebook btn-sm d-block w-100" href="#"><span class="fab fa-facebook-square me-2" data-fa-transform="grow-8"></span> 
+                                                    
+                                                    facebook
+                                                 </a></div> *@
+                                        <div class="row g-2 mt-2">
+                                        <div class="col-sm-6">
+                                            <a asp-controller="Account"
+                                               asp-action="ExternalLogin"
+                                               asp-route-provider="Google"
+                                               asp-route-returnUrl="@Model.ReturnURL"
+                                               class="btn btn-outline-google-plus btn-sm d-block w-100">
+
+                                                <span class="fab fa-google me-2"></span>
+                                                Google
+                                            </a>
+                                        </div>
+
+
+                                            <div class="col-sm-6">
+                                                <a asp-controller="Account"
+                                                   asp-action="ExternalLogin"
+                                                   asp-route-provider="Facebook"
+                                                   asp-route-returnUrl="@Model.ReturnURL"
+                                                   class="btn btn-outline-facebook btn-sm d-block w-100">
+
+                                                    <span class="fab fa-facebook-square me-2"></span>
+                                                    Facebook
+                                                </a>
+                                            </div>
+                                           
+                                            </div>
+
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- ===============================================-->
+    <!--    End of Main Content-->
+    <!-- ===============================================-->
+    @section Scripts
+    {
+
+        <partial name="_ToastreScriptPartial" />
+        <partial name="_ValidationScriptsPartial" />
+
+    }
+
+
+
+
+    <!-- ===============================================-->
+    <!--    JavaScripts-->
+    <!-- ===============================================-->
+    <script src="../../../vendors/popper/popper.min.js"></script>
+    <script src="../../../vendors/bootstrap/bootstrap.min.js"></script>
+    <script src="../../../vendors/anchorjs/anchor.min.js"></script>
+    <script src="../../../vendors/is/is.min.js"></script>
+    <script src="../../../vendors/fontawesome/all.min.js"></script>
+    <script src="../../../vendors/lodash/lodash.min.js"></script>
+    <script src="../../../vendors/list.js/list.min.js"></script>
+    <script src="../../../assets/js/theme.js"></script>
+
+</body>
+
+</html>

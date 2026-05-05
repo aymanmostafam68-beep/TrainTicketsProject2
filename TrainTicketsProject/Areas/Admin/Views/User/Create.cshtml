@@ -1,0 +1,134 @@
+﻿@model UserCreateVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Create New User</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Add New User</h3>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Left Side: Main Form -->
+            <div class="col-lg-8">
+                <div class="card shadow-none border">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-area="Admin" asp-controller="User" asp-action="Create" class="row g-3">
+                            <div asp-validation-summary="All" class="text-danger fs--1"></div>
+
+                            <!-- Username -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="userName">User Name <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="userName" placeholder="e.g. jdoe" required>
+                                <span class="text-danger fs--1" asp-validation-for="userName"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Email">Email Address <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="Email" type="email" placeholder="name@example.com" required>
+                                <span class="text-danger fs--1" asp-validation-for="Email"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Password">Password <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="Password" type="password" placeholder="••••••••" required>
+                                <span class="text-danger fs--1" asp-validation-for="Password"></span>
+                            </div>
+
+                            <!-- Role Selector -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="RoleName">Account Role <span class="text-danger">*</span></label>
+                                <select class="form-select shadow-none js-choice" asp-for="RoleName" asp-items="Model.Roles">
+                                    <option value="">-- Select Role --</option>
+                                </select>
+                                <span class="text-danger fs--1" asp-validation-for="RoleName"></span>
+                            </div>
+
+                            <!-- Activation Toggle -->
+                            <div class="col-12 mt-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" asp-for="IsConfirmed" type="checkbox" id="confirmCheck">
+                                    <label class="form-check-label fw-semi-bold" for="confirmCheck">Activate account immediately</label>
+                                </div>
+                                <div class="form-text fs--1">Active users can log in and access assigned modules immediately.</div>
+                            </div>
+
+                            <!-- Form Footer Actions -->
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Form</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Save User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Guidelines & Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fas fa-shield-alt text-primary fs-2 me-2"></span>
+                            <h6 class="mb-0">Security Guidelines</h6>
+                        </div>
+                        <ul class="list-unstyled fs--1 text-600 mb-0">
+                            <li class="mb-2"><span class="fas fa-check-circle text-success me-2"></span>Passwords should be at least 8 characters.</li>
+                            <li class="mb-2"><span class="fas fa-check-circle text-success me-2"></span>Usernames must be unique across the system.</li>
+                            <li class="mb-2"><span class="fas fa-check-circle text-success me-2"></span>Assign roles carefully to maintain data integrity.</li>
+                        </ul>
+                        <hr>
+                        <div class="bg-white p-3 rounded-3 border">
+                            <h6 class="fs--1 fw-bold">Live Summary</h6>
+                            <div class="text-uppercase fw-semi-bold fs--2 text-500">Target Role:</div>
+                            <div class="fs-4 fw-bold text-primary mb-2" id="role-preview">Not Selected</div>
+                            <div class="text-uppercase fw-semi-bold fs--2 text-500">Login Identity:</div>
+                            <div class="fs--1" id="user-preview">Awaiting input...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Interactive UI updates for the sidebar summary
+        document.getElementById('userName').addEventListener('input', function(e) {
+            document.getElementById('user-preview').innerText = e.target.value || 'Awaiting input...';
+        });
+
+        document.getElementById('RoleName').addEventListener('change', function(e) {
+            const selectedRole = e.target.options[e.target.selectedIndex].text;
+            document.getElementById('role-preview').innerText = e.target.value ? selectedRole : 'Not Selected';
+        });
+    </script>
+}

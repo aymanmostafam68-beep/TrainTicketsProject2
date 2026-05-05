@@ -1,0 +1,152 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.CarriageVMs
+@model CarriageCreateVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Carriages</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Create New Carriage</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Add New Carriage</h3>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Left Side: Main Form -->
+            <div class="col-lg-8">
+                <div class="card shadow-none border">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Carriage Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-area="Admin" asp-controller="Carriage" asp-action="Create" enctype="multipart/form-data" class="row g-3">
+                            <div asp-validation-summary="ModelOnly" class="text-danger fs--1"></div>
+
+                            <!-- Carriage Name -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Carriage.CarriageName">Carriage Name/Number <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="Carriage.CarriageName" placeholder="e.g. Carriage A1" required>
+                                <span class="text-danger fs--1" asp-validation-for="Carriage.CarriageName"></span>
+                            </div>
+
+                            <!-- Capacity -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Carriage.Capacity">Total Capacity <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="Carriage.Capacity" type="number" placeholder="Enter seat count" required>
+                                <span class="text-danger fs--1" asp-validation-for="Carriage.Capacity"></span>
+                            </div>
+
+                            <!-- Train Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Carriage.TrainId">Assigned Train <span class="text-danger">*</span></label>
+                                <select class="form-select shadow-none js-choice" asp-for="Carriage.TrainId" asp-items="@(new SelectList(Model.Trains, "TrainId", "TrainName"))">
+                                    <option value="" selected disabled>Choose train</option>
+                                </select>
+                                <span class="text-danger fs--1" asp-validation-for="Carriage.TrainId"></span>
+                            </div>
+
+                            <!-- Class Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Carriage.TrainClassId">Service Class <span class="text-danger">*</span></label>
+                                <select class="form-select shadow-none js-choice" asp-for="Carriage.TrainClassId" asp-items="@(new SelectList(Model.TrainClasses, "Id", "Name"))">
+                                    <option value="" selected disabled>Choose class</option>
+                                </select>
+                                <span class="text-danger fs--1" asp-validation-for="Carriage.TrainClassId"></span>
+                            </div>
+
+                            <!-- Status Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Carriage.IsActive">Operational Status</label>
+                                <select class="form-select shadow-none" asp-for="Carriage.IsActive">
+                                    <option value="true">Active / In Service</option>
+                                    <option value="false">Inactive / Maintenance</option>
+                                </select>
+                                <span class="text-danger fs--1" asp-validation-for="Carriage.IsActive"></span>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Form</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Create Carriage
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Status & Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fas fa-info-circle text-primary fs-2 me-2"></span>
+                            <h6 class="mb-0">Carriage Details Info</h6>
+                        </div>
+                        <p class="fs--1 text-600">Each carriage must be assigned to a specific train and class to enable seat booking.</p>
+                        <hr>
+                        <div class="bg-white p-3 rounded-3 border mb-3">
+                            <h6 class="fs--1 fw-bold">Live Summary</h6>
+                            <div class="text-uppercase fw-semi-bold fs--2 text-500">Identity:</div>
+                            <div class="fs-2 fw-bold text-primary mb-1" id="name-preview">New Carriage</div>
+
+                            <div class="row g-0 mt-3">
+                                <div class="col-6">
+                                    <div class="text-uppercase fw-semi-bold fs--2 text-500">Capacity:</div>
+                                    <div class="fw-bold text-900" id="capacity-preview">0 Seats</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-uppercase fw-semi-bold fs--2 text-500">Class:</div>
+                                    <div class="fw-bold text-900" id="class-preview">---</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info border-0 d-flex align-items-center mb-0" role="alert">
+                            <div class="bg-info me-3 icon-item"><span class="fas fa-couch text-white fs-1"></span></div>
+                            <p class="mb-0 flex-1 fs--1">The system will automatically generate seat numbers based on the <strong>Total Capacity</strong> entered.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Interactive UI updates for the sidebar summary
+        document.getElementById('Carriage_CarriageName').addEventListener('input', function(e) {
+            document.getElementById('name-preview').innerText = e.target.value || 'New Carriage';
+        });
+
+        document.getElementById('Carriage_Capacity').addEventListener('input', function(e) {
+            document.getElementById('capacity-preview').innerText = (e.target.value || '0') + ' Seats';
+        });
+
+        document.getElementById('Carriage_TrainClassId').addEventListener('change', function(e) {
+            const selectedText = e.target.options[e.target.selectedIndex].text;
+            document.getElementById('class-preview').innerText = e.target.value ? selectedText : '---';
+        });
+    </script>
+}

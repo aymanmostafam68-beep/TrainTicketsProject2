@@ -1,0 +1,216 @@
+﻿@model TrainVM
+
+<div class="container-fluid py-4">
+    <!-- Page Header & Stats -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-train me-2 text-primary"></span>
+                        <span>Trains Management</span>
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-falcon-primary btn-sm" href="/admin/Trains/Create">
+                        <span class="fas fa-plus me-1"></span> New Train
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Stats Summary -->
+            <div class="row g-3 mt-2">
+                <div class="col-sm-4">
+                    <div class="p-2 border-sm-end border-200">
+                        <h6 class="text-700 fs--2 text-uppercase fw-bold">Total Trains</h6>
+                        <h3 class="fw-normal text-700 mb-0">@Model.train.Count()</h3>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="p-2 border-sm-end border-200">
+                        <h6 class="text-700 fs--2 text-uppercase fw-bold text-success">Active</h6>
+                        <h3 class="fw-normal text-700 mb-0">@Model.train.Count(t => t.IsActive)</h3>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="p-2">
+                        <h6 class="text-700 fs--2 text-uppercase fw-bold text-warning">Inactive</h6>
+                        <h3 class="fw-normal text-700 mb-0">@Model.train.Count(t => !t.IsActive)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light">
+            <div class="row align-items-center justify-content-between g-2">
+                <div class="col-sm-auto d-flex align-items-center">
+                    <!-- Bulk Actions -->
+                    <div id="bulk-actions" class="d-none me-3">
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" id="bulkActionSelect">
+                                <option value="">Bulk Actions</option>
+                                <option value="delete">Delete Selected</option>
+                            </select>
+                            <button class="btn btn-outline-danger" type="button" id="applyBulkAction">Apply</button>
+                        </div>
+                    </div>
+                    <!-- Entry Count -->
+                    <select class="form-select form-select-sm" id="customLength">
+                        <option value="10">10 entries</option>
+                        <option value="25">25 entries</option>
+                        <option value="50">50 entries</option>
+                    </select>
+                </div>
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Export Group -->
+                        <div class="btn-group shadow-none">
+                            <button class="btn btn-falcon-default btn-sm" id="exportExcel" title="Excel"><span class="fas fa-file-excel text-success"></span></button>
+                            <button class="btn btn-falcon-default btn-sm" id="exportPdf" title="PDF"><span class="fas fa-file-pdf text-danger"></span></button>
+                            <button class="btn btn-falcon-default btn-sm" id="printTable" title="Print"><span class="fas fa-print text-primary"></span></button>
+                        </div>
+                        <!-- Search Box -->
+                        <div class="search-box" style="min-width: 250px;">
+                            <input class="form-control form-control-sm search-input" id="customSearch" type="search" placeholder="Search trains..." />
+                            <span class="fas fa-search search-box-icon"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table id="trainTable" class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="white-space-nowrap py-2 align-middle" style="width: 20px;">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input select-all" type="checkbox" />
+                                </div>
+                            </th>
+                            <th class="sort">ID</th>
+                            <th class="sort">Train Name</th>
+                            <th class="sort text-center">Capacity</th>
+                            <th class="sort">Created At</th>
+                            <th class="sort text-center">Status</th>
+                            <th class="text-end px-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.train)
+                        {
+                            <tr>
+                                <td class="align-middle white-space-nowrap">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input row-select" type="checkbox" data-id="@item.TrainId" />
+                                    </div>
+                                </td>
+                                <td class="align-middle text-primary fw-semi-bold">#@item.TrainId</td>
+                                <td class="align-middle fw-bold text-900">@item.TrainName</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge badge-soft-info">@item.Carriages.Sum(c => c.Capacity) Seats</span>
+                                </td>
+                                <td class="align-middle">@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td class="align-middle text-center">
+                                    <!-- Using conditional classes to match the text color to the badge type -->
+                                    <span class="badge badge-soft-@(item.IsActive ? "success text-success" : "danger text-danger") rounded-pill">
+                                        @(item.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td class="align-middle text-end px-3">
+                                    <div class="dropdown font-sans-serif position-static">
+                                        <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal" type="button" data-bs-toggle="dropdown"><span class="fas fa-ellipsis-h fs--1"></span></button>
+                                        <div class="dropdown-menu dropdown-menu-end border py-0">
+                                            <div class="bg-white py-2">
+                                                <a class="dropdown-item" href="/admin/Trains/Edit/@item.TrainId">Edit</a>
+                                                <a class="dropdown-item" href="/admin/Trains/Details/@item.TrainId">Details</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="DeleteTrain(@item.TrainId)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Master Footer -->
+        <div class="card-footer bg-light py-2">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <p class="mb-0 fs--1 fw-semi-bold text-600" id="tableInfo"></p>
+                </div>
+                <div class="col-auto d-flex" id="tablePagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            const table = $('#trainTable').DataTable({
+                dom: 't', //[cite: 1]
+                pageLength: 10,
+                order: [[1, 'desc']],
+                columnDefs: [{ orderable: false, targets: [0, 6] }],
+                buttons: [
+                    { extend: 'excel', className: 'd-none' },
+                    { extend: 'pdf', className: 'd-none' },
+                    { extend: 'print', className: 'd-none' }
+                ],
+                drawCallback: function () {
+                    const info = table.page.info();
+                    $('#tableInfo').html(`Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} entries`); //[cite: 1]
+
+                    $('#tablePagination').html($('.dataTables_paginate').html());
+                    $('.dataTables_paginate').remove();
+                    $('#tablePagination .pagination').addClass('pagination-sm mb-0'); //[cite: 1]
+                }
+            });
+
+            // Bindings[cite: 1]
+            $('#customSearch').on('keyup', function () { table.search(this.value).draw(); });
+            $('#customLength').on('change', function () { table.page.len(this.value).draw(); });
+
+            $('#exportExcel').on('click', () => table.button('.buttons-excel').trigger());
+            $('#exportPdf').on('click', () => table.button('.buttons-pdf').trigger());
+            $('#printTable').on('click', () => table.button('.buttons-print').trigger());
+
+            // Bulk Logic[cite: 1]
+            $('.select-all').on('change', function() {
+                $('.row-select').prop('checked', this.checked);
+                toggleBulkMenu();
+            });
+            $(document).on('change', '.row-select', toggleBulkMenu);
+
+            function toggleBulkMenu() {
+                const count = $('.row-select:checked').length;
+                count > 0 ? $('#bulk-actions').removeClass('d-none') : $('#bulk-actions').addClass('d-none');
+            }
+        });
+
+        function DeleteTrain(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Delete AJAX logic
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,42 @@
+﻿<div class="table-responsive scrollbar">
+    <table class="table table-sm table-striped fs--1 mb-0">
+        <thead class="bg-200 text-dark">
+            <!-- Changed text-900 to text-dark -->
+            <tr>
+                <th class="sort align-middle ps-3" style="width: 50px;">#</th>
+                <th class="sort align-middle">Station Name</th>
+                <th class="sort align-middle text-end pe-3">Distance</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+            @if (Model is null)
+            {
+                <tr>
+                    <td colspan="3" class="text-center py-4 text-muted">No stations found for this route.</td>
+                </tr>
+            }
+            else
+            {
+                int order = 1;
+                foreach (var rs in Model)
+                {
+                    <tr>
+                        <td class="align-middle ps-3">
+                            <!-- text-primary makes the number inside the badge darker/clearer -->
+                            <span class="badge badge-soft-primary rounded-pill text-primary">@(order++)</span>
+                        </td>
+                        <td class="align-middle fw-semi-bold text-black">
+                            <!-- Changed text-900 to text-black -->
+                            <!-- text-info or text-primary for the icon -->
+                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>@rs.Station.Name
+                        </td>
+                        <td class="align-middle text-end pe-3">
+                            <span class="fw-bold text-dark">@rs.DistanceFromStart</span>
+                            <span class="text-secondary">KM</span> <!-- Changed text-500 to text-secondary -->
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,188 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.GeneralSettingVMs
+@model GeneralSettingEditVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Header Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">System Settings</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">⚙️ Global Configuration</h3>
+                <p class="text-600 mb-0">Manage system-wide parameters, pricing logic, and station branding.</p>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-home me-1"></span> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="generalSetting.Id" />
+
+            <div class="row g-3">
+                <!-- Left Column: Settings (8/12) -->
+                <div class="col-lg-8">
+                    <!-- Branding & Identity -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Station Identity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 text-center mb-3">
+                                    <div class="position-relative d-inline-block border rounded overflow-hidden shadow-sm bg-white">
+                                        <img id="logoFilePreview"
+                                             src="@(string.IsNullOrEmpty(Model.generalSetting.logoName)
+                                                    ? Url.Content("~/img/StationLogo/default-logo.png")
+                                                    : Url.Content("~/img/StationLogo/" + Model.generalSetting.logoName))"
+                                             class="img-fluid"
+                                             style="width: 100%; max-width: 600px; height: 250px; object-fit: cover;"
+                                             alt="Station Logo" />
+                                        <div class="bg-dark bg-opacity-50 text-white position-absolute bottom-0 start-0 end-0 py-1 fs--2">
+                                            Current Station Header Image
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 mx-auto" style="max-width: 400px;">
+                                        <input type="file" id="logoFile" name="logoFile" class="form-control form-control-sm shadow-none" />
+                                        <div class="form-text fs--2">Recommended size: 1200x500px (JPG, PNG)</div>
+                                        <span class="text-danger fs--1" asp-validation-for="generalSetting.logoName"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semi-bold text-900" asp-for="generalSetting.Name">System Display Name</label>
+                                    <input asp-for="generalSetting.Name" class="form-control shadow-none" placeholder="e.g. Egypt National Railways" />
+                                    <span asp-validation-for="generalSetting.Name" class="text-danger fs--1"></span>
+                                </div>
+
+                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operational Settings -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Operational & Financials</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semi-bold text-900" asp-for="generalSetting.PricePerKilometer">Price / KM</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-200"><i class="fas fa-dollar-sign"></i></span>
+                                        <input asp-for="generalSetting.PricePerKilometer" class="form-control shadow-none" />
+                                    </div>
+                                    <span asp-validation-for="generalSetting.PricePerKilometer" class="text-danger fs--1"></span>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semi-bold text-900" asp-for="generalSetting.TimeSlot">Time Interval (Min)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-200"><i class="fas fa-clock"></i></span>
+                                        <input asp-for="generalSetting.TimeSlot" class="form-control shadow-none" />
+                                    </div>
+                                    <span asp-validation-for="generalSetting.TimeSlot" class="text-danger fs--1"></span>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semi-bold text-900">System Status</label>
+                                    <select asp-for="generalSetting.IsActive" class="form-select shadow-none">
+                                        <option value="true">🟢 Online / Active</option>
+                                        <option value="false">🔴 Offline / Maintenance</option>
+                                    </select>
+                                    <span asp-validation-for="generalSetting.IsActive" class="text-danger fs--1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="card shadow-none border">
+                        <div class="card-body py-3 d-flex justify-content-between bg-light">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-falcon-default btn-sm">
+                                <span class="fas fa-times me-1"></span> Discard Changes
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5">
+                                <span class="fas fa-save me-1"></span> Save Global Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Meta Info (4/12) -->
+                <div class="col-lg-4">
+                    <div class="card shadow-none border h-100">
+                        <div class="card-header bg-transparent border-bottom">
+                            <h6 class="mb-0 d-flex align-items-center">
+                                <span class="fas fa-history me-2 text-primary"></span>Audit Trail
+                            </h6>
+                        </div>
+                        <div class="card-body fs--1 bg-light">
+                            <div class="mb-3">
+                                <label class="text-600 fw-bold mb-1">Created At</label>
+                                <div class="p-2 bg-white rounded border text-900">@Model.CreatedAtInfo</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-600 fw-bold mb-1">Owner / Creator</label>
+                                <div class="p-2 bg-white rounded border text-900">
+                                    <span class="fas fa-user-shield me-2 text-400"></span>@Model.createdUserName
+                                </div>
+                            </div>
+
+                            <hr class="text-300" />
+
+                            <div class="mb-3">
+                                <label class="text-600 fw-bold mb-1">Last Modification</label>
+                                <div class="p-2 bg-white rounded border text-900 text-primary fw-semi-bold">@Model.UpdatedAtInfo</div>
+                            </div>
+                            <div class="mb-0">
+                                <label class="text-600 fw-bold mb-1">Last Modified By</label>
+                                <div class="p-2 bg-white rounded border text-900">
+                                    <span class="fas fa-user-edit me-2 text-400"></span>@(Model.updatedUserName ?? "N/A")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-soft-info border-top">
+                            <div class="d-flex align-items-start">
+                                <span class="fas fa-info-circle text-info me-2 mt-1"></span>
+                                <p class="fs--2 text-info mb-0">Changes to pricing and intervals will apply to all <strong>future</strong> ticket bookings and schedules immediately.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+
+    <script>
+        // ملف معاينة الصورة المحدث ليتوافق مع التصميم الجديد
+        const mainFileInput = document.getElementById('logoFile');
+        const mainFilePreview = document.getElementById('logoFilePreview');
+
+        mainFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mainFilePreview.src = e.target.result;
+                    // إضافة تأثير بسيط عند التغيير
+                    mainFilePreview.classList.add('fadeIn');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

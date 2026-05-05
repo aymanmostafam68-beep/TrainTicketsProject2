@@ -1,0 +1,180 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.CarriageVMs
+@model CarriageVM
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-subway me-2 text-primary"></span>
+                        <span>Carriages Management</span>
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-falcon-primary btn-sm" href="/Admin/Carriage/Create">
+                        <span class="fas fa-plus me-1"></span> New Carriage
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light">
+            <form method="get" asp-action="Index">
+                <div class="row align-items-center justify-content-between g-2">
+                    <div class="col-sm-auto d-flex align-items-center">
+                        <!-- Custom Entry Count (Visual Only since you use server-side paging) -->
+                        <select class="form-select form-select-sm me-2" id="customLength">
+                            <option value="10">10 entries</option>
+                            <option value="25">25 entries</option>
+                        </select>
+
+                        <!-- Reset Button -->
+                        <a asp-action="Index" class="btn btn-falcon-default btn-sm text-danger" title="Reset Filters">
+                            <span class="fas fa-redo"></span>
+                        </a>
+                    </div>
+                    <div class="col-sm-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Search Box Integrated with Form -->
+                            <div class="search-box" style="min-width: 250px;">
+                                <input class="form-control form-control-sm search-input"
+                                       type="search" name="CarriageName"
+                                       placeholder="Search carriage name..."
+                                       value="@Context.Request.Query["CarriageName"]" />
+                                <span class="fas fa-search search-box-icon"></span>
+                            </div>
+                            <button type="submit" class="btn btn-falcon-primary btn-sm">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table id="carriageTable" class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort">ID</th>
+                            <th class="sort">Carriage Name</th>
+                            <th class="sort text-center">Capacity</th>
+                            <th class="sort">Train</th>
+                            <th class="sort">Route</th>
+                            <th class="sort text-center">Status</th>
+                            <th class="text-end px-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.Carriages)
+                        {
+                            <tr>
+                                <td class="align-middle text-primary fw-semi-bold">#@item.CarriageId</td>
+                                <td class="align-middle fw-bold text-900">@item.CarriageName</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge badge-soft-info">@item.Capacity Seats</span>
+                                </td>
+                                <td class="align-middle">@(item.Train?.TrainName ?? "N/A")</td>
+                                <td class="align-middle">@(item.Train?.Route?.RouteName ?? "N/A")</td>
+                                <td class="align-middle text-center">
+                                    <!-- Using conditional classes to match the text color to the badge type -->
+                                    <span class="badge badge-soft-@(item.IsActive ? "success text-success" : "danger text-danger") rounded-pill">
+                                        @(item.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td class="align-middle text-end px-3">
+                                    <div class="dropdown font-sans-serif position-static">
+                                        <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal" type="button" data-bs-toggle="dropdown">
+                                            <span class="fas fa-ellipsis-h fs--1"></span>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end border py-2">
+                                            <a class="dropdown-item" href="/Admin/Carriage/Edit/@item.CarriageId">Edit</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger btn-delete"
+                                               href="javascript:void(0)"
+                                               data-id="@item.CarriageId"
+                                               data-url="@Url.Action("Delete", "Carriage", new { area = "Admin" })">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Footer (Matching Master Style) -->
+        <div class="card-footer bg-light py-2">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <p class="mb-0 fs--1 fw-semi-bold text-600">
+                        Showing page @Model.CurrentPage of @Model.TotalPages
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <ul class="pagination pagination-sm mb-0">
+                        <!-- Previous Page -->
+                        <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/Carriage/Index?page=@(Model.CurrentPage - 1)&CarriageName=@Context.Request.Query["CarriageName"]">
+                                <span class="fas fa-chevron-left"></span>
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="/Admin/Carriage/Index?page=@i&CarriageName=@Context.Request.Query["CarriageName"]">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next Page -->
+                        <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/Carriage/Index?page=@(Model.CurrentPage + 1)&CarriageName=@Context.Request.Query["CarriageName"]">
+                                <span class="fas fa-chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Delete Action with SweetAlert2
+            $('.btn-delete').on('click', function () {
+                const id = $(this).data('id');
+                const url = $(this).data('url');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This carriage will be permanently deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = `${url}/${id}`;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

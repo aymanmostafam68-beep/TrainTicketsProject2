@@ -1,0 +1,175 @@
+﻿@model UsersVM
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid">
+    <!-- Stats Section (Falcon Style) -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-4 col-xxl-2">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-700">Total Users</h6>
+                            <h3 class="fw-bolder mb-0">@Model.UsersWitRoles.Count()</h3>
+                        </div>
+                        <div class="col-auto">
+                            <span class="fas fa-users text-primary fs-3"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xxl-2">
+            <div class="card h-100 border-start border-dark border-4">
+                <div class="card-body">
+                    <h6 class="text-700">SuperAdmins</h6>
+                    <h3 class="fw-bolder mb-0">@Model.UsersWitRoles.Count(x => x.RoleName.ToUpper() == "SUPERADMIN")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xxl-2">
+            <div class="card h-100 border-start border-success border-4">
+                <div class="card-body">
+                    <h6 class="text-700">Admins</h6>
+                    <h3 class="fw-bolder mb-0 text-success">@Model.UsersWitRoles.Count(x => x.RoleName.ToUpper() == "ADMIN")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xxl-2">
+            <div class="card h-100 border-start border-info border-4">
+                <div class="card-body">
+                    <h6 class="text-700">Employees</h6>
+                    <h3 class="fw-bolder mb-0 text-info">@Model.UsersWitRoles.Count(x => x.RoleName.ToUpper() == "EMPLOYEE")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xxl-2">
+            <div class="card h-100 border-start border-warning border-4">
+                <div class="card-body">
+                    <h6 class="text-700">Customers</h6>
+                    <h3 class="fw-bolder mb-0 text-warning">@Model.UsersWitRoles.Count(x => x.RoleName.ToUpper() == "CUSTOMER")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter & Table Section -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <form method="get" asp-action="Index">
+                <div class="row g-2 justify-content-between align-items-center">
+                    <div class="col-sm-auto d-flex align-items-center">
+                        <div class="input-group input-group-sm me-2">
+                            <input class="form-control" type="text" name="UserName" placeholder="User Name..." value="@Context.Request.Query["UserName"]" />
+                            <button class="btn btn-primary" type="submit"><span class="fas fa-search"></span></button>
+                        </div>
+                        <select class="form-select form-select-sm" name="RoleName" onchange="this.form.submit()"
+                                asp-items="@(Model.Roles != null ? new SelectList(Model.Roles, "Value", "Text") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                            <option value="">All Roles</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-auto">
+                        <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2 text-danger">Reset</a>
+                        <a href="/Admin/User/Create" class="btn btn-falcon-success btn-sm"><span class="fas fa-plus me-1"></span>Create User</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort align-middle">User Name</th>
+                            <th class="sort align-middle">Role</th>
+                            <th class="sort align-middle">Email</th>
+                            <th class="sort align-middle text-center">Status</th>
+                            <th class="sort align-middle text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.UsersWitRoles)
+                        {
+                            <tr>
+                                <td class="align-middle fw-semi-bold">@item.userName</td>
+                                <td class="align-middle">
+                                    <span class="badge badge-soft-info">@item.RoleName</span>
+                                </td>
+                                <td class="align-middle">@item.Email</td>
+                                <td class="align-middle text-center">
+                                    @if (item.IsConfirmed)
+                                    {
+                                        <span class="badge badge-dot text-success"><span class="fas fa-check-circle me-1"></span>Confirmed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-dot text-danger"><span class="fas fa-times-circle me-1"></span>Pending</span>
+                                    }
+                                </td>
+                                <td class="align-middle text-end text-nowrap">
+                                    <a href="/Admin/User/Edit/@item.id" class="btn btn-falcon-default btn-sm shadow-none me-1" title="Edit">
+                                        <span class="fas fa-pencil-alt text-warning"></span>
+                                    </a>
+                                    <button data-url="@Url.Action("Delete", "User", new { area = "Admin" })" data-id="@item.id" class="btn btn-falcon-default btn-sm shadow-none btn-delete" title="Delete">
+                                        <span class="fas fa-trash-alt text-danger"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer d-flex align-items-center justify-content-end bg-light">
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="/Admin/User/Index?page=@(Model.CurrentPage - 1)"><span class="fas fa-chevron-left"></span></a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/Admin/User/Index?page=@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="/Admin/User/Index?page=@(Model.CurrentPage + 1)"><span class="fas fa-chevron-right"></span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const url = this.dataset.url;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "User profile will be permanently removed!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                    customClass: { confirmButton: 'btn btn-danger btn-sm', cancelButton: 'btn btn-secondary btn-sm' }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = `${url}/${id}`;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

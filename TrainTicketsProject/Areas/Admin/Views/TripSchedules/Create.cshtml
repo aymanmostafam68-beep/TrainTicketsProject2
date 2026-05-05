@@ -1,0 +1,203 @@
+﻿@model TripScheduleCreateVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Header Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Trip Schedules</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">New Schedule</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">🗓️ Create Trip Schedule</h3>
+                <p class="text-600 mb-0">Configure outbound and linked return trip timings.</p>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-list me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="TripSchedule.RouteId" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger fs--1"></div>
+
+            <div class="row g-3">
+                <!-- Left Side: Main Configuration -->
+                <div class="col-lg-8">
+
+                    <!-- Section 1: Trip Setup -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">1. Core Configuration</h5>
+                            <div class="form-check form-switch mb-0">
+                                <input asp-for="TripSchedule.IsActive" class="form-check-input" type="checkbox" checked />
+                                <label class="form-check-label fw-bold" asp-for="TripSchedule.IsActive">Active Schedule</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="TripSchedule.TrainId" class="form-label fw-semi-bold">Select Train <span class="text-danger">*</span></label>
+                                    <select asp-for="TripSchedule.TrainId" class="form-select js-train-select js-choice">
+                                        <option value="">-- Select Train --</option>
+                                        @foreach (var train in Model.Train)
+                                        {
+                                            <option value="@train.TrainId" data-route-name="@train.Route.RouteName">
+                                                @train.TrainName (@train.TrainCode)
+                                            </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="TripSchedule.TrainId" class="text-danger fs--1"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semi-bold">Assigned Route (Read-only)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-200"><i class="fas fa-route"></i></span>
+                                        <input id="assignedRouteName" value="@Model.AssignedRouteName" class="form-control bg-100" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Outbound Trip -->
+                    <div class="card shadow-none border mb-3 border-primary-subtle">
+                        <div class="card-header bg-primary-subtle d-flex align-items-center">
+                            <span class="fas fa-plane-departure text-primary me-2"></span>
+                            <h5 class="mb-0 text-primary">2. Outbound Trip Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="SelectedDepartureTime" class="form-label fw-semi-bold">Departure Time</label>
+                                    <select asp-for="SelectedDepartureTime" asp-items="Model.TimeSlots" class="form-select shadow-none">
+                                        <option value="">-- Select Time --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="SelectedArrivalTime" class="form-label fw-semi-bold">Arrival Time</label>
+                                    <select asp-for="SelectedArrivalTime" asp-items="Model.TimeSlots" class="form-select shadow-none">
+                                        <option value="">-- Select Time --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="TripSchedule.StartDay" class="form-label fw-semi-bold">Start Date</label>
+                                    <input asp-for="TripSchedule.StartDay" type="date" class="form-control shadow-none" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="TripSchedule.EndDate" class="form-label fw-semi-bold">End Date</label>
+                                    <input asp-for="TripSchedule.EndDate" type="date" class="form-control shadow-none" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="TripSchedule.Every" class="form-label fw-semi-bold">Repeat Frequency</label>
+                                    <select asp-for="TripSchedule.Every" class="form-select shadow-none">
+                                        <option value="1">Daily</option>
+                                        <option value="2">Every 2 Days</option>
+                                        <option value="7">Weekly</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Return Trip (Toggleable) -->
+                    <div class="card shadow-none border mb-3">
+                        <div class="card-header bg-light">
+                            <div class="form-check form-switch mb-0">
+                                <input asp-for="HasReturnTrip" class="form-check-input js-return-toggle" type="checkbox" />
+                                <label class="form-check-label fw-bold mb-0" asp-for="HasReturnTrip">Linked Return Trip Required?</label>
+                            </div>
+                        </div>
+                        <div id="returnTripCard" class="card-body bg-light-subtle @(Model.HasReturnTrip ? string.Empty : "d-none")">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ReturnSelectedDepartureTime" class="form-label fw-semi-bold">Return Departure</label>
+                                    <select asp-for="ReturnSelectedDepartureTime" asp-items="Model.TimeSlots" class="form-select shadow-none">
+                                        <option value="">-- Select Time --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="ReturnSelectedArrivalTime" class="form-label fw-semi-bold">Return Arrival</label>
+                                    <select asp-for="ReturnSelectedArrivalTime" asp-items="Model.TimeSlots" class="form-select shadow-none">
+                                        <option value="">-- Select Time --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Sidebar Info -->
+                <div class="col-lg-4">
+                    <div class="sticky-sidebar">
+                        <div class="card shadow-none border mb-3">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3"><span class="fas fa-info-circle me-2"></span>Schedule Summary</h6>
+                                <div id="schedule-preview">
+                                    <div class="border-start border-3 border-primary ps-3 mb-3">
+                                        <div class="text-500 fs--2 fw-bold text-uppercase">Current Focus:</div>
+                                        <div class="fw-bold text-900" id="preview-route-name">No Train Selected</div>
+                                    </div>
+                                    <div class="alert alert-info border-0 p-3 fs--1">
+                                        <p class="mb-0"><strong>Pro-Tip:</strong> The system will generate multiple Trip instances based on the <em>Start</em> and <em>End</em> dates automatically.</p>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mt-3">
+                                    <span class="fas fa-calendar-check me-2"></span> Save All Schedules
+                                </button>
+                                <a asp-action="Index" class="btn btn-link btn-sm text-secondary w-100 mt-2">Discard Changes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const trainSelect = document.querySelector(".js-train-select");
+            const routeInput = document.getElementById("assignedRouteName");
+            const previewRoute = document.getElementById("preview-route-name");
+            const returnToggle = document.querySelector(".js-return-toggle");
+            const returnCard = document.getElementById("returnTripCard");
+
+            function updateAssignedRoute() {
+                const selectedOption = trainSelect.options[trainSelect.selectedIndex];
+                const routeName = selectedOption?.dataset?.routeName || "No Train Selected";
+                routeInput.value = routeName === "No Train Selected" ? "" : routeName;
+                previewRoute.innerText = routeName;
+            }
+
+            function toggleReturnSection() {
+                if (returnToggle.checked) {
+                    returnCard.classList.remove("d-none");
+                    returnCard.classList.add("animate__animated", "animate__fadeIn");
+                } else {
+                    returnCard.classList.add("d-none");
+                }
+            }
+
+            if (trainSelect) {
+                trainSelect.addEventListener("change", updateAssignedRoute);
+                updateAssignedRoute();
+            }
+
+            if (returnToggle) {
+                returnToggle.addEventListener("change", toggleReturnSection);
+                toggleReturnSection();
+            }
+        });
+    </script>
+}

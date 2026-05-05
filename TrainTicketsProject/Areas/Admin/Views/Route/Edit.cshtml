@@ -1,0 +1,192 @@
+﻿@using TrainTicketsProject.ViewModels;
+@model TrainTicketsProject.ViewModels.RouteVM
+
+<main>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb & Title Section -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/Admin/Route/Index">All Routes</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Route</li>
+                    </ol>
+                </nav>
+                <h3 class="fw-bold text-900 mt-2">Edit Route: <span class="text-primary">@Model.RouteName</span></h3>
+            </div>
+            <div class="col-auto">
+                <a href="/Admin/Route/Index" class="btn btn-falcon-default btn-sm">
+                    <span class="fas fa-chevron-left me-1"></span> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Left Side: Route Configuration (8/12) -->
+            <div class="col-lg-8">
+                <div class="card shadow-none border mb-3">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Route Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" class="row g-3">
+                            <input type="hidden" asp-for="Code" /> <!-- -->
+                            <!-- Basic Info -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="RouteName">Route Name <span class="text-danger">*</span></label>
+                                <input class="form-control shadow-none" asp-for="RouteName" required>
+                                <span class="text-danger fs--1" asp-validation-for="RouteName"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Code">Route Code (System Only)</label>
+                                <input class="form-control shadow-none bg-200" asp-for="Code" readonly>
+                                <div class="form-text fs--2 text-muted">Codes cannot be edited after creation.</div>
+                            </div>
+
+                            <!-- Start & End Points -->
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="StartPoint">Start Point Station</label>
+                                <select class="form-select shadow-none js-choice" asp-for="StartPoint"
+                                        asp-items="@(new SelectList(Model.AvailableStations, "StationCode", "StationName"))">
+                                    <option value="">-- Select Start Station --</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="EndPoint">End Point Station</label>
+                                <select class="form-select shadow-none js-choice" asp-for="EndPoint"
+                                        asp-items="@(new SelectList(Model.AvailableStations, "StationCode", "StationName"))">
+                                    <option value="">-- Select End Station --</option>
+                                </select>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-md-12">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="Description">Description</label>
+                                <textarea class="form-control shadow-none" asp-for="Description" rows="3" placeholder="Describe the route path..."></textarea>
+                                <span class="text-danger fs--1" asp-validation-for="Description"></span>
+                            </div>
+
+                            <!-- Stations & Distances Table -->
+                            <div class="col-12">
+                                <label class="form-label text-900 fw-bold mb-3">Route Stations & Distances (KM)</label>
+                                <div class="table-responsive scrollbar">
+                                    <table class="table table-sm table-striped border-bottom">
+                                        <thead class="bg-200 text-900">
+                                            <tr>
+                                                <th class="align-middle text-center" style="width: 50px;">Include</th>
+                                                <th class="align-middle">Station Name</th>
+                                                <th class="align-middle text-end" style="width: 150px;">Distance (km)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.AvailableStations.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td class="align-middle text-center">
+                                                        <div class="form-check mb-0">
+                                                            <input type="checkbox" asp-for="@Model.AvailableStations[i].IsSelected" class="form-check-input js-station-checkbox" />
+                                                            <input type="hidden" asp-for="@Model.AvailableStations[i].StationCode" />
+                                                            <input type="hidden" asp-for="@Model.AvailableStations[i].StationName" />
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <span class="fw-semi-bold text-primary">@Model.AvailableStations[i].StationName</span>
+                                                    </td>
+                                                    <td class="align-middle text-end">
+                                                        <input type="number" step="any" asp-for="@Model.AvailableStations[i].DistanceFromStart"
+                                                               class="form-control form-control-sm text-end shadow-none" placeholder="0.00" />
+                                                        <span asp-validation-for="@Model.AvailableStations[i].DistanceFromStart" class="text-danger fs--2"></span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Status Selection -->
+                            <div class="col-md-4">
+                                <label class="form-label text-900 fw-semi-bold" asp-for="IsActive">Route Status</label>
+                                <select class="form-select shadow-none" asp-for="IsActive">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="col-12 mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="/Admin/Route/Index" class="btn btn-falcon-default btn-sm me-2">
+                                        <span class="fas fa-times me-1"></span> Cancel
+                                    </a>
+                                    <button type="reset" class="btn btn-link text-danger btn-sm p-0 shadow-none">Reset Changes</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5">
+                                    <span class="fas fa-save me-1"></span> Update Route
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Meta Info Card (4/12) -->
+            <div class="col-lg-4">
+                <div class="card shadow-none border bg-light h-100">
+                    <div class="card-header bg-transparent border-bottom">
+                        <h6 class="mb-0 d-flex align-items-center">
+                            <span class="fas fa-info-circle me-2 text-primary"></span>Record Information
+                        </h6>
+                    </div>
+                    <div class="card-body fs--1">
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1">Created Date</label>
+                            <p class="text-900 mb-0">@Model.CreatedAtInfo</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1">Created By</label>
+                            <p class="text-900 mb-0 text-capitalize">@Model.createdUserName</p>
+                        </div>
+                        <hr class="text-300" />
+                        <div class="mb-3">
+                            <label class="text-600 fw-bold mb-1 text-uppercase text-primary">Last Update</label>
+                            <p class="text-900 mb-0">@Model.UpdatedAtInfo</p>
+                        </div>
+                        <div class="mb-0">
+                            <label class="text-600 fw-bold mb-1">Updated By</label>
+                            <p class="text-900 mb-0 text-capitalize">@(Model.updatedUserName ?? "N/A")</p>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-white rounded-2 border">
+                            <h6 class="fs--2 text-600 fw-bold text-uppercase">Quick Tip</h6>
+                            <p class="mb-0 text-muted small">Ensure the "Distance" is calculated from the <strong>Starting Point</strong> for all selected stations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_notificationPartial" />
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // Monitor changes in checkboxes to clear data if unselected
+            $('.js-station-checkbox').on('change', function () {
+                let row = $(this).closest('tr');
+                let distanceInput = row.find('input[type="number"]');
+
+                if (!$(this).is(':checked')) {
+                    distanceInput.val('');
+                    distanceInput.prop('required', false);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,178 @@
+﻿@using TrainTicketsProject.Models.ViewsModel.CarriageSeatVMs
+@model CarriageSeatVM
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-chair me-2 text-primary"></span>
+                        <span>Carriage Seats Management</span>
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-falcon-primary btn-sm" href="/Admin/CarraiageSeat/Create">
+                        <span class="fas fa-plus me-1"></span> New Seat Configuration
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light">
+            <form method="get" asp-action="Index">
+                <div class="row align-items-center justify-content-between g-2">
+                    <div class="col-sm-auto d-flex align-items-center">
+                        <!-- Reset All Filters -->
+                        <a asp-action="Index" class="btn btn-falcon-default btn-sm me-2 text-danger" title="Reset All">
+                            <span class="fas fa-sync-alt"></span>
+                        </a>
+                        <select class="form-select form-select-sm" id="customLength" style="width: auto;">
+                            <option value="10">10 entries</option>
+                            <option value="25">25 entries</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Search Group -->
+                            <div class="search-box" style="min-width: 250px;">
+                                <input class="form-control form-control-sm search-input"
+                                       type="search" name="TrainCode"
+                                       placeholder="Search by Train Code..."
+                                       value="@Context.Request.Query["TrainCode"]" />
+                                <span class="fas fa-search search-box-icon"></span>
+                            </div>
+                            <button type="submit" class="btn btn-falcon-primary btn-sm">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table id="seatsTable" class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort">Train Code</th>
+                            <th class="sort">Train Name</th>
+                            <th class="sort text-center">Carriages</th>
+                            <th class="sort text-center">Total Capacity</th>
+                            <th class="sort text-center">Available</th>
+                            <th class="text-end px-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @foreach (var item in Model.trains)
+                        {
+                            <tr>
+                                <td class="align-middle fw-semi-bold">
+                                    <span class="badge badge-soft-secondary">@item.TrainCode</span>
+                                </td>
+                                <td class="align-middle fw-bold text-900">@item.TrainName</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge rounded-pill bg-200 text-primary">@item.CarriageCount</span>
+                                </td>
+                                <td class="align-middle text-center fw-semi-bold">@item.Capacity</td>
+                                <td class="align-middle text-center">
+                                    <!-- Added 'text-success' to darken the font color -->
+                                    <span class="badge badge-soft-success text-success">
+                                        @item.AvailableSeats
+                                    </span>
+                                </td>
+                                <td class="align-middle text-end px-3">
+                                    <div class="dropdown font-sans-serif position-static">
+                                        <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal" type="button" data-bs-toggle="dropdown">
+                                            <span class="fas fa-ellipsis-h fs--1"></span>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end border py-2">
+                                            <a class="dropdown-item" href="/Admin/CarraiageSeat/Edit/@item.id">Edit Config</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger btn-delete"
+                                               href="javascript:void(0)"
+                                               data-id="@item.id"
+                                               data-url="@Url.Action("Delete", "CarraiageSeat", new { area = "Admin" })">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Master Pagination Footer -->
+        <div class="card-footer bg-light py-2">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <p class="mb-0 fs--1 fw-semi-bold text-600">
+                        Page @Model.CurrentPage of @Model.TotalPages
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <ul class="pagination pagination-sm mb-0">
+                        <!-- Prev -->
+                        <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/CarraiageSeat/Index?page=@(Model.CurrentPage - 1)&TrainCode=@Context.Request.Query["TrainCode"]">
+                                <span class="fas fa-chevron-left"></span>
+                            </a>
+                        </li>
+
+                        <!-- Pages -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="/Admin/CarraiageSeat/Index?page=@i&TrainCode=@Context.Request.Query["TrainCode"]">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next -->
+                        <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="/Admin/CarraiageSeat/Index?page=@(Model.CurrentPage + 1)&TrainCode=@Context.Request.Query["TrainCode"]">
+                                <span class="fas fa-chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Enhanced Delete handling
+            $('.btn-delete').on('click', function () {
+                const id = $(this).data('id');
+                const url = $(this).data('url');
+
+                Swal.fire({
+                    title: 'Delete Seat Entry?',
+                    text: "This will remove the seat configuration for this train.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = `${url}/${id}`;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

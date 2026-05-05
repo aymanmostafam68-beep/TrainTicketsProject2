@@ -1,0 +1,112 @@
+@using TrainTicketsProject.Models.ViewsModel.CarriageSeatVMs
+@model ViewSeatsInfoVM
+<meta charset="UTF-8">
+<title>Generate Carriage Seats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<div class="container-fluid px-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4 mb-4">
+        <div>
+            <h2 class="mb-1">Carriage Seats</h2>
+            <p class="text-muted mb-0">Seat list and current availability for this carriage.</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted d-block mb-2">Carriage Name</span>
+                    <h5 class="mb-0">@Model.CarriageName</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted d-block mb-2">Capacity</span>
+                    <h5 class="mb-0">@Model.Capacity</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <span class="text-muted d-block mb-2">Created Seats</span>
+                    <h5 class="mb-0">@Model.carriageSeats.Count</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Seat Details</h5>
+            <span class="badge bg-primary">Carriage #@Model.CarriageId</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Seat Number</th>
+                            <th>Availability</th>
+                            <th>Service Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.carriageSeats != null && Model.carriageSeats.Any())
+                        {
+                            foreach (var seat in Model.carriageSeats.OrderBy(s => s.SeatNumber))
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@seat.SeatNumber</td>
+                                    <td>
+                                        <span class="badge @(seat.IsAvailable ? "bg-success" : "bg-danger")">
+                                            @(seat.IsAvailable ? "Available" : "Booked")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(seat.IsOutOfService ? "bg-warning text-dark" : "bg-secondary")">
+                                            @(seat.IsOutOfService ? "Out of Service" : "In Service")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <form asp-action="IsOutOfService"
+                                              asp-route-id="@seat.CarriageSeatId"
+                                              method="post"
+                                              class="d-inline">
+                                            <input type="hidden" name="carriageId" value="@Model.CarriageId" />
+                                            <button type="submit"
+                                                    class="btn btn-sm @(seat.IsOutOfService ? "btn-outline-success" : "btn-outline-warning")">
+                                                @(seat.IsOutOfService ? "Enable" : "Disable")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    No seats were found for this carriage.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ToastreScriptPartial" />
+}

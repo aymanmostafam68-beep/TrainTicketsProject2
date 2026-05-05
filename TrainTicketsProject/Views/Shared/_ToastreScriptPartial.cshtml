@@ -1,0 +1,18 @@
+﻿@if (TempData["Notification-success"] != null)
+{
+    <script>
+        toastr.success('@TempData["Notification-success"]');
+    </script>
+}
+else if (TempData["Notification-error"] != null)
+{
+    <script>
+        toastr.error('@TempData["Notification-error"]');
+    </script>
+}
+else if (TempData["Notification-warning"] != null)
+{
+    <script>
+        toastr.warning('@TempData["Notification-warning"]');
+    </script>
+}

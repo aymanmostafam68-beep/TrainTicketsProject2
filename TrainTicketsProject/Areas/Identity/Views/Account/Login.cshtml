@@ -1,0 +1,196 @@
+﻿@model IdentityVM
+
+<!DOCTYPE html>
+<html data-bs-theme="dark" lang="en-US" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>TrainTickets | Dashboard &amp; Web App Template</title>
+
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="../../Identity/assets/img/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../Identity/assets/img/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../Identity/assets/img/favicons/favicon-16x16.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../../Identity/assets/img/favicons/favicon.ico">
+    <link rel="manifest" href="../../Identity/assets/img/favicons/manifest.json">
+    <meta name="msapplication-TileImage" content="../../Identity/assets/img/favicons/mstile-150x150.png">
+    <meta name="theme-color" content="#ffffff">
+    <script src="../../Identity/assets/js/config.js"></script>
+    <script src="~/vendors/simplebar/simplebar.min.js"></script>
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+    <link href="~/vendors/simplebar/simplebar.min.css" rel="stylesheet">
+    <link href="~/assets/css/theme-rtl.css" rel="stylesheet" id="style-rtl">
+    <link href="~/assets/css/theme.css" rel="stylesheet" id="style-default">
+    <link href="~/assets/css/user-rtl.css" rel="stylesheet" id="user-style-rtl">
+    <link href="~/assets/css/user.css" rel="stylesheet" id="user-style-default">
+    <script>
+        var isRTL = JSON.parse(localStorage.getItem('isRTL'));
+        if (isRTL) {
+          var linkDefault = document.getElementById('style-default');
+          var userLinkDefault = document.getElementById('user-style-default');
+          linkDefault.setAttribute('disabled', true);
+          userLinkDefault.setAttribute('disabled', true);
+          document.querySelector('html').setAttribute('dir', 'rtl');
+        } else {
+          var linkRTL = document.getElementById('style-rtl');
+          var userLinkRTL = document.getElementById('user-style-rtl');
+          linkRTL.setAttribute('disabled', true);
+          userLinkRTL.setAttribute('disabled', true);
+        }
+    </script>
+</head>
+
+
+<body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+    <main class="main" id="top">
+        <div class="container-fluid">
+            <!-- flex-center keeps the card in the middle of the viewport -->
+            <div class="row min-vh-100 flex-center g-0">
+                <!-- ADJUSTED WIDTH HERE: col-lg-9 (75% width) looks best for dual-column cards -->
+                <div class="col-lg-9 col-xxl-7 py-3 position-relative">
+
+                    <img class="bg-auth-circle-shape" src="../../Identity/assets/img/icons/spot-illustrations/bg-shape.png" alt="" width="250">
+                    <img class="bg-auth-circle-shape-2" src="../../Identity/assets/img/icons/spot-illustrations/shape-1.png" alt="" width="150">
+
+                    <div class="card overflow-hidden z-1">
+                        <div class="card-body p-0">
+                            <div class="row g-0 h-100">
+                                <!-- LEFT COLUMN (Info/Branding) -->
+                                <div class="col-md-5 text-center bg-card-gradient d-flex flex-column justify-content-between py-4">
+                                    <div>
+                                        <a class="text-primary mb-2 font-sans-serif fs-5 d-inline-block fw-bolder text-decoration-none" href="/Identity/Account/index">
+                                            Train Tickets System
+                                        </a>
+                                        <div class="position-relative p-4 pt-md-5 pb-md-8" data-bs-theme="light">
+                                            <div class="bg-holder bg-auth-card-shape" style="background-image:url(../../Identity/assets/img/icons/spot-illustrations/train.png); background-position: center 10%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div data-bs-theme="light">
+                                        <p class="text-white">
+                                            Don't have an account?<br>
+                                            <a class="text-decoration-underline link-light" href="/Identity/Account/Register">Get started!</a>
+                                        </p>
+                                        <a asp-area="Admin"
+                                           asp-controller="Account"
+                                           asp-action="Login"
+                                           class="btn btn-danger fw-bold px-4 mb-3">
+                                            Go to Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- RIGHT COLUMN (Login Form) -->
+                                <div class="col-md-7 d-flex flex-center">
+                                    <div class="p-4 p-md-5 flex-grow-1">
+                                        <h3>Account Login</h3>
+                                        <form method="post" asp-action="Login">
+                                            <!-- Form Fields remain the same -->
+                                            <div class="mb-3">
+                                                <label class="form-label">Email address</label>
+                                                <input class="form-control" type="email" name="UsernameOrEmail" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password</label>
+                                                <input class="form-control" type="password" name="Password" />
+                                            </div>
+                                            <div class="col-auto"><a class="fs-10" href="/Identity/Account/ForgotPassword">Forgot Password?</a></div>
+
+                                            <button class="btn btn-primary d-block w-100 mt-3" type="submit">Log in</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- External login section -->
+                                <div class="position-relative mt-4">
+                                    <hr />
+                                    <div class="divider-content-center">or log in with</div>
+                                </div>
+
+                                <div class="row g-2 mt-2">
+                                    <div class="col-sm-6">
+                                        <a asp-controller="Account"
+                                           asp-action="ExternalLogin"
+                                           asp-route-provider="Google"
+                                           asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                                           class="btn btn-outline-google-plus btn-sm d-block w-100">
+                                            <span class="fab fa-google me-2"></span>
+                                            Google
+                                        </a>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <a asp-controller="Account"
+                                           asp-action="ExternalLogin"
+                                           asp-route-provider="Facebook"
+                                           asp-route-returnUrl="@Model.ReturnURL"
+                                           class="btn btn-outline-facebook btn-sm d-block w-100">
+                                            <span class="fab fa-facebook-square me-2"></span>
+                                            Facebook
+                                        </a>
+                                    </div>
+                            </div> <!-- End Row -->
+                        </div> <!-- End Card Body -->
+                    </div> <!-- End Card -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- ===============================================-->
+    <!--     <!-- Bootstrap JS -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- ===============================================-->
+    @section Scripts
+    {
+
+        <partial name="_ToastreScriptPartial" />
+        <partial name="_ValidationScriptsPartial" />
+
+    }
+ 
+
+    <!-- ===============================================-->
+    <!--    JavaScripts-->
+    <!-- ===============================================-->
+    <script src="../../../vendors/popper/popper.min.js"></script>
+    <script src="../../../vendors/bootstrap/bootstrap.min.js"></script>
+    <script src="../../../vendors/anchorjs/anchor.min.js"></script>
+    <script src="../../../vendors/is/is.min.js"></script>
+    <script src="../../../vendors/fontawesome/all.min.js"></script>
+    <script src="../../../vendors/lodash/lodash.min.js"></script>
+    <script src="../../../vendors/list.js/list.min.js"></script>
+    <script src="../../../assets/js/theme.js"></script>
+
+</body>
+
+</html>

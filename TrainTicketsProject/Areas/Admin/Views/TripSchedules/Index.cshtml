@@ -1,0 +1,171 @@
+@model TripSchedulesVM
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row flex-between-center g-3">
+                <div class="col-md">
+                    <h5 class="mb-2 mb-md-0 d-flex align-items-center">
+                        <span class="fas fa-calendar-alt me-2 text-primary"></span>
+                        <span>Trip Schedules Management</span>
+                    </h5>
+                    <p class="text-muted fs--1 mb-0">Outbound schedules with optional linked return trips.</p>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-falcon-primary btn-sm" asp-area="Admin" asp-controller="TripSchedules" asp-action="Create">
+                        <span class="fas fa-plus me-1"></span> Add Schedule
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-none border">
+        <div class="card-header bg-light py-2">
+            <div class="row align-items-center justify-content-between g-2">
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs--1 fw-semi-bold">Show:</span>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-auto">
+                    <div class="search-box" style="min-width: 200px;">
+                        <input class="form-control form-control-sm search-input" type="search" placeholder="Search schedules..." />
+                        <span class="fas fa-search search-box-icon"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive scrollbar">
+                <table class="table table-sm table-striped fs--1 mb-0 overflow-hidden">
+                    <thead class="bg-200 text-900">
+                        <tr>
+                            <th class="sort">ID</th>
+                            <th class="sort">Train Details</th>
+                            <th class="sort">Route</th>
+                            <th class="sort">Departure</th>
+                            <th class="sort">Arrival</th>
+                            <th class="sort">Recurrence</th>
+                            <th class="sort text-center">Return Status</th>
+                            <th class="text-end px-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">
+                        @if (Model.TripSchedule.Any())
+                        {
+                            foreach (var item in Model.TripSchedule)
+                            {
+                                <tr>
+                                    <td class="align-middle text-primary fw-semi-bold">#@item.TripScheduleId</td>
+                                    <td class="align-middle">
+                                        <div class="fw-bold text-900">@item.Train.TrainName</div>
+                                        <div class="text-500 fs--2">Code: @item.Train.TrainCode</div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge badge-soft-primary">
+                                            <span class="fas fa-map-marker-alt me-1"></span>@item.Route.RouteName
+                                        </span>
+                                    </td>
+                                    <td class="align-middle white-space-nowrap fw-semi-bold text-success">
+                                        @item.DepartureTime.ToString("hh:mm tt")
+                                    </td>
+                                    <td class="align-middle white-space-nowrap">
+                                        <span class="fw-semi-bold text-danger">@item.ArrivalTime.ToString("hh:mm tt")</span>
+                                        @if (item.IsNextDay)
+                                        {
+                                            <span class="badge rounded-pill badge-soft-danger ms-1 fs--2">Next Day</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="fas fa-redo me-1 text-400"></span>Every @item.Every day(s)
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        @if (item.ReturnScheduleId.HasValue)
+                                        {
+                                            <span class="badge rounded-pill badge-soft-success">
+                                                <span class="fas fa-check-circle me-1"></span>Configured
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill badge-soft-secondary">No Return</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-end px-3">
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-falcon-default btn-sm" asp-action="Edit" asp-route-id="@item.TripScheduleId" title="Edit">
+                                                <span class="fas fa-pencil-alt text-warning"></span>
+                                            </a>
+                                            <a class="btn btn-falcon-default btn-sm" asp-action="Delete" asp-route-id="@item.TripScheduleId" title="Delete">
+                                                <span class="fas fa-trash-alt text-danger"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <img class="mb-3" src="~/assets/img/icons/spot-illustrations/45.png" alt="" width="60" />
+                                    <p class="fw-bold text-400">No trip schedules found.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Footer -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer bg-light py-2">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <p class="mb-0 fs--1 fw-semi-bold text-600">
+                            Page @Model.CurrentPage of @Model.TotalPages
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage - 1 })">
+                                    <span class="fas fa-chevron-left"></span>
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage + 1 })">
+                                    <span class="fas fa-chevron-right"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+}
