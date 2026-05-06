@@ -87,10 +87,15 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // Fetch all stations from the database via service
+            var viewModel = await ReloadPage();
+
+            return View(viewModel);
+        }
+
+        public async Task<RouteVM> ReloadPage()
+        {
             var stationsFromDb = await _stationService.GetAllStationsAsync();
 
-            // Initialize the ViewModel with the available stations list
             var viewModel = new RouteVM
             {
                 AvailableStations = stationsFromDb.Select(s => new StationSelectionRowVM
@@ -101,13 +106,23 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
                 }).ToList()
             };
 
-            return View(viewModel);
+            return viewModel;
         }
 
+        private bool ValidateRoute(RouteVM model)
+        {
+            if (model.StartPoint == model.EndPoint)
+            {
+                ModelState.AddModelError("", "Start point should not equal end point.");
+                return false;
+            }
+
+            return true;
+        }
         [HttpPost]
         public async Task<IActionResult> Create(RouteVM routevm)
         {
-
+           
             if (ModelState.IsValid)
             {
                 var selectedStations = routevm.AvailableStations
@@ -123,6 +138,13 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
                     EndPoint = routevm.EndPoint,
                 };
 
+                if (!ValidateRoute(routevm))
+                {
+                    var viewModel = await ReloadPage();
+
+                    return View(viewModel);
+                }
+
                 var result = await _routeService.CreateRouteWithStationsAsync(newRoute, selectedStations);
 
                 if (result)
@@ -130,7 +152,7 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                ModelState.AddModelError("", "Error while saving data.");
+                ModelState.AddModelError("", "Error while creating data.");
             }
 
 
@@ -257,12 +279,21 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
             existingRoute.EndPoint = routeVM.EndPoint;
             existingRoute.IsActive = routeVM.IsActive;
             existingRoute.UpdatedUserId = UserId; // Set the updater
-            // تصفية المحطات المختارة فقط بمسافات صالحة
+            // تصفية المحطات المختارة فقط بمسافات
+            
             var selectedStations = routeVM.AvailableStations
                 .Where(s => s.IsSelected)
                 .ToList();
             routeVM.CreatedAt = existingRoute.CreatedAt; // Preserve original creator
             routeVM.CreatedUserId = UserId; // Set the updater
+
+            if (!ValidateRoute(routeVM))
+            {
+                var viewModel = await ReloadPage();
+
+                return View(viewModel);
+            }
+
             var result = await _routeService.UpdateRouteAsync(existingRoute, selectedStations);
 
             if (result != null)

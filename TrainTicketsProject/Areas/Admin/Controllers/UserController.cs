@@ -133,7 +133,21 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
             user.LockoutEnabled= vm.IsLocked;
             user.LockoutEnd = vm.LockoutEnd;
 
-            await _userManager.UpdateAsync(user);
+          var result =   await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["Notification-success"] = "Saved.";
+
+            }
+
+            else
+            {
+                TempData["Notification-error"] = "Error while saving edited data";
+                return RedirectToAction(nameof(Index));
+
+
+            }
+
 
             var roles = await _userManager.GetRolesAsync(user);
             if (roles is not null)
@@ -229,7 +243,9 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError("", error.Description);
+                    TempData["Notification-error"] = error.Description;
+
                 }
 
                 return View(model);

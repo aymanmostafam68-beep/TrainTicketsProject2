@@ -41,14 +41,14 @@
                 TripId = t.TripDirectionId,
                 TrainCode = schedule.Train?.TrainCode ?? "N/A",
                 RouteName = schedule.Route?.RouteName ?? "N/A",
-                DepartureStation = orderedStations.FirstOrDefault()?.Station?.Name ?? "N/A",
-                ArrivalStation = orderedStations.LastOrDefault()?.Station?.Name ?? "N/A",
-                DepartureTime = schedule.DepartureTime,
+                 DepartureStation = schedule.IsReturnTrip ? orderedStations.LastOrDefault()?.Station?.Name ?? "N/A" : orderedStations.FirstOrDefault()?.Station?.Name ?? "N/A",
+                 ArrivalStation = schedule.IsReturnTrip ? orderedStations.FirstOrDefault()?.Station?.Name ?? "N/A" : orderedStations.LastOrDefault()?.Station?.Name ?? "N/A",
+                 DepartureTime = schedule.DepartureTime,
                 ArrivalTime = schedule.ArrivalTime,
                 Duration = schedule.Duration,
                 TravelDate = t.TravelDate,
-                AllRouteStations = orderedStations
-            };
+                 AllRouteStations = schedule.IsReturnTrip ? orderedStations.AsEnumerable().Reverse().ToList() : orderedStations.ToList()
+             };
         }).OrderBy(t => t.TravelDate);
 
 

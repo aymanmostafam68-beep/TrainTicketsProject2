@@ -97,17 +97,17 @@
                                         </div>
                                         <form method="post" asp-action="Login">
 
-                                            <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+                                            <div asp-validation-summary="ModelOnly" class="text-danger fs--1"></div>
 
                                             <div class="mb-3">
                                                 <label asp-for="UsernameOrEmail" class="form-label" for="card-email">Email address</label>
-                                                <input asp-for="UsernameOrEmail" class="form-control" name="UsernameOrEmail" id="card-email" type="email" />
+                                                <input asp-for="UsernameOrEmail" class="form-control" name="UsernameOrEmail" id="card-email" type="email" required />
                                                 <span asp-validation-for="UsernameOrEmail" class="text-danger small"></span>
 
                                             </div>
                                             <div class="mb-3">
                                                 <label asp-for="Password" class="form-label" for="card-password">Password</label>
-                                                <input asp-for="Password" class="form-control" name="Password" id="card-password" type="password" />
+                                                <input asp-for="Password" class="form-control" name="Password" id="card-password" type="password" required />
                                                 <span asp-validation-for="Password" class="text-danger small"></span>
                                             </div>
                                             <div class="row flex-between-center">

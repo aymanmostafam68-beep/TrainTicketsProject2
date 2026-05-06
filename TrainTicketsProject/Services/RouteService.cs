@@ -27,7 +27,7 @@ namespace TrainTicketsProject.Services
         {
 
 
-          var AllRoutes =   await _routeRepo.GetAll(c=>c.IsActive);
+          var AllRoutes =   await _routeRepo.GetAll();
 
             return (AllRoutes);
 

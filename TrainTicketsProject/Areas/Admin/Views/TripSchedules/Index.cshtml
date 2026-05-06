@@ -67,12 +67,12 @@
                                 <tr>
                                     <td class="align-middle text-primary fw-semi-bold">#@item.TripScheduleId</td>
                                     <td class="align-middle">
-                                        <div class="fw-bold text-900">@item.Train.TrainName</div>
-                                        <div class="text-500 fs--2">Code: @item.Train.TrainCode</div>
+                                        <div class="fw-bold text-900 text-black">@item.Train.TrainName</div>
+                                        <div class="text-500 fs--2 text-black">Code: @item.Train.TrainCode</div>
                                     </td>
                                     <td class="align-middle">
-                                        <span class="badge badge-soft-primary">
-                                            <span class="fas fa-map-marker-alt me-1"></span>@item.Route.RouteName
+                                        <span class="badge badge-soft-primary text-dark">
+                                            <span class="fas fa-map-marker-alt me-1 text-black"></span>@item.Route.RouteName
                                         </span>
                                     </td>
                                     <td class="align-middle white-space-nowrap fw-semi-bold text-success">
@@ -91,13 +91,13 @@
                                     <td class="align-middle text-center">
                                         @if (item.ReturnScheduleId.HasValue)
                                         {
-                                            <span class="badge rounded-pill badge-soft-success">
-                                                <span class="fas fa-check-circle me-1"></span>Configured
+                                            <span class="badge rounded-pill text-dark badge-soft-success">
+                                                <span class="fas fa-check-circle me-1 text-dark"></span>Configured
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill badge-soft-secondary">No Return</span>
+                                            <span class="badge rounded-pill badge-soft-secondary text-dark">No Return</span>
                                         }
                                     </td>
                                     <td class="align-middle text-end px-3">
