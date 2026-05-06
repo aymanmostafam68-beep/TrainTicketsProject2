@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TrainTicketsProject.Areas.Admin.Controllers
@@ -241,12 +242,12 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
             {
                 model = await ReloadUserCreateVMAsync();
 
+
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
-                    TempData["Notification-error"] = error.Description;
-
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
+
 
                 return View(model);
             }

@@ -31,7 +31,10 @@
                     </div>
                     <div class="card-body">
                         <form method="post" enctype="multipart/form-data" class="row g-3">
+                            <div asp-validation-summary="ModelOnly" class="text-danger fs--1"></div>
+
                             <input type="hidden" asp-for="Code" /> <!-- -->
+
                             <!-- Basic Info -->
                             <div class="col-md-6">
                                 <label class="form-label text-900 fw-semi-bold" asp-for="RouteName">Route Name <span class="text-danger">*</span></label>

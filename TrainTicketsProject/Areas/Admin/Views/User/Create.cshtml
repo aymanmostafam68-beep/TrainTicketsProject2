@@ -30,7 +30,7 @@
                     </div>
                     <div class="card-body">
                         <form method="post" asp-area="Admin" asp-controller="User" asp-action="Create" class="row g-3">
-                            <div asp-validation-summary="ModelOnly" class="text-danger text-bg-dark fs-2"></div>
+                            <div asp-validation-summary="All" class="text-danger fs--1"></div>
 
                             <!-- Username -->
                             <div class="col-md-6">
@@ -117,9 +117,9 @@
 </main>
 
 @section Scripts {
-    <partial name="_ToastreScriptPartial" />
-    <partial name="_notificationPartial" />
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_ToastreScriptPartial" />
+   
 
     <script>
         // Interactive UI updates for the sidebar summary
