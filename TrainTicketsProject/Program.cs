@@ -71,6 +71,9 @@ namespace TrainTicketsProject
             builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddScoped<IStationService, StationService>();
+            builder.Services.AddScoped<ICarriageService, CarriageService>();
+            builder.Services.AddScoped<ICarriageClassService, CarriageClassService>();
+            builder.Services.AddScoped<ICarraiageSeatService, CarraiageSeatService>();
 
             builder.Services.AddScoped<IRouteService, RouteService>();
             builder.Services.AddScoped<IGetUserInfoEntity,GetUserInfoEntity>();
