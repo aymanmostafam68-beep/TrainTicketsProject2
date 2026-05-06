@@ -69,7 +69,7 @@ namespace TrainTicketsProject.Areas.Admin.Controllers
             }
 
 
-            return RedirectToAction("Index", new { id = id });
+            return RedirectToAction("Edit", new { id = result.trainId });
         }
 
 

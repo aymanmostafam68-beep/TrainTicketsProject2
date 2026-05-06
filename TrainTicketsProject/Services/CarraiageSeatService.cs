@@ -155,9 +155,9 @@ namespace TrainTicketsProject.Services
             }
 
 
-        public async Task<(bool result, string? message)> GenerateSeats([FromRoute] int id)
+        public async Task<(bool result, string? message, int trainId)> GenerateSeats([FromRoute] int id)
         {
-            if (id == 0) return (false, "Invalid Carriage ID");
+            if (id == 0) return (false, "Invalid Carriage ID",0);
 
 
             var carriage = await _carriagerepository.GetOne(
@@ -165,7 +165,7 @@ namespace TrainTicketsProject.Services
            s => s.Include(c => c.CarriageSeats),
            tracked: true);
 
-            if (carriage == null) return (false, "Carriage not found");
+            if (carriage == null) return (false, "Carriage not found", 0);
 
             int currentSeatCount = carriage.CarriageSeats?.Count ?? 0;
             var seatsToAdd = new List<CarriageSeat>();
@@ -189,14 +189,15 @@ namespace TrainTicketsProject.Services
                 int result = await _carriageseatrepository.Comment();
 
                 if (result == 0)
-                 return (false, "Failed to add seats");
+                 return (false, "Failed to add seats", 0 );
 
             }
-            return (true, "Seats added successfully");
+            return (true, "Seats added successfully",carriage.TrainId);
 
 
 
         }
+
 
 
 

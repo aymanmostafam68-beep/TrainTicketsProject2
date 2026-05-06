@@ -9,8 +9,7 @@ namespace TrainTicketsProject.Interfaces
 
         Task<(bool result, string? message)> SeatsGenerator(TrainInfoVM model);
 
-        Task<(bool result, string? message)> GenerateSeats([FromRoute] int id);
-
+        Task<(bool result, string? message, int trainId)> GenerateSeats([FromRoute] int id);
 
         Task<ViewSeatsInfoVM> ViewSeats([FromRoute] int id);
         Task<(bool result, string? message)> IsOutOfService([FromRoute] int id, int carriageId);
